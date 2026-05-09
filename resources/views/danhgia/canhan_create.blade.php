@@ -16,7 +16,7 @@
                         <div class="card-body">
                             {{-- Phần Tiêu đề --}}
                             <table class="table table-borderless">
-                                <h6 class="font-italic text-bold text-right">{{ $thong_tin_mau_phieu['ten_mau'] }}</h6>
+                                <h6 class="font-italic text-bold text-right">Mẫu số 01</h6>
                                 <tbody>
                                     <tr>
                                         <td class="text-center py-0">CỤC THUẾ</td>
@@ -30,23 +30,20 @@
                             </table>
                             <br>
                             <br>
-                            <h4 class="text-center text-bold my-0">PHIẾU ĐÁNH GIÁ, XẾP LOẠI CHẤT LƯỢNG HẰNG THÁNG</h4>
-                            <h6 class="text-center font-italic my-0">(Áp dụng đối với
-                                {{ $thong_tin_mau_phieu['doi_tuong_ap_dung'] }})
-                            </h6>
-                            <h6 class="text-center align-middle my-0">Tháng
+                            <h4 class="text-center text-bold my-0">PHIẾU THEO DÕI, ĐÁNH GIÁ CÔNG CHỨC</h4>                            
+                            <h6 class="text-center align-middle my-0">(Kỳ theo dõi, đánh giá: Quý
                                 <input type="number" class="text-center" id="thang_danh_gia" name="thang_danh_gia"
                                     min="1" max="{{ $thoi_diem_danh_gia->month }}"
-                                    value="{{ $thoi_diem_danh_gia->month }}"> / <input type="number" class="text-center"
+                                    value="{{ $thoi_diem_danh_gia->month }}"> năm <input type="number" class="text-center"
                                     id="nam_danh_gia" name="nam_danh_gia" min="1"
                                     max="{{ $thoi_diem_danh_gia->year }}" value="{{ $thoi_diem_danh_gia->year }}" readonly>
-                            </h6>
+                            )</h6>
                             <br>
 
                             {{-- Phần Thông tin cá nhân --}}
                             <h6>&emsp;&emsp;&emsp;- Họ và tên: {{ $user->name }}</h6>
                             @if ($thong_tin_mau_phieu['mau'] == 'mau01A')
-                                <h6>&emsp;&emsp;&emsp;- Chức vụ: {{ $user->chuc_vu->ten_chuc_vu }}</h6>
+                                <h6>&emsp;&emsp;&emsp;- Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>
                             @endif
                             <h6>&emsp;&emsp;&emsp;- Đơn vị: {{ $user->phong->ten_phong }}, {{ $user->don_vi->ten_don_vi }}
                             </h6>
