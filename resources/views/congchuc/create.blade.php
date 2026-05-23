@@ -57,17 +57,6 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label" for="ngach">Ngạch</label>
-                                <div class="col-sm-9">
-                                    <select id="ngach" name="ngach" class="form-control custom-select">
-                                        <option selected></option>
-                                        @foreach ($ngach as $ngach)
-                                            <option value="{{ $ngach->ma_ngach }}">{{ $ngach->ten_ngach }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label" for="chuc_vu">Chức vụ</label>
                                 <div class="col-sm-9">
                                     <select id="chuc_vu" name="chuc_vu" class="form-control custom-select">
@@ -114,9 +103,10 @@
                                     </select> --}}
                                     <div class="form-check">
                                         @foreach ($roles as $role)
-                                            <input type="checkbox" id="{{ $role }}" class="form-check-input" name="roles[]"
-                                                value="{{ $role }}">
-                                            <label class="form-check-label" for="{{ $role }}">{{ $role }}</label><br>
+                                            <input type="checkbox" id="{{ $role }}" class="form-check-input"
+                                                name="roles[]" value="{{ $role }}">
+                                            <label class="form-check-label"
+                                                for="{{ $role }}">{{ $role }}</label><br>
                                         @endforeach
                                     </div>
                                 </div>

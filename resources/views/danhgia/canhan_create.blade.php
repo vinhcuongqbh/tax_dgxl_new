@@ -44,7 +44,7 @@
 
                             {{-- Phần Thông tin cá nhân --}}
                             <h6>Họ và tên: {{ $user->name }}</h6>
-                            <h6>Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>                           
+                            <h6>Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>
                             <h6>Đơn vị công tác: {{ $user->phong->ten_phong }}, {{ $user->don_vi->ten_don_vi }}
                             </h6>
                             <br>
@@ -250,14 +250,14 @@
                                 </colgroup>
                                 <tbody>
                                     <tr>
-                                        <td class="py-0"></td>
-                                        <td class="py-0"></td>
                                         <td class="text-center font-italic py-0">Ngày
                                             {{ $ngay_thuc_hien_danh_gia->day }}
                                             tháng
                                             {{ $ngay_thuc_hien_danh_gia->month }} năm
                                             {{ $ngay_thuc_hien_danh_gia->year }}
                                         </td>
+                                        <td class="py-0"></td>
+                                        <td class="text-center font-italic py-0">Ngày ... tháng ... năm ...
                                     </tr>
                                     <tr>
                                         <td class="text-center text-bold py-0">CÔNG CHỨC TỰ ĐÁNH

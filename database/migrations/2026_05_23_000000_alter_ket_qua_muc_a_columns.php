@@ -16,9 +16,9 @@ return new class extends Migration
             return;
         }
 
-        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_toi_da` DECIMAL(3,1) NOT NULL');
-        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_tu_cham` DECIMAL(3,1) NULL');
-        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_danh_gia` DECIMAL(3,1) NULL');
+        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_toi_da` DECIMAL(4,1) NOT NULL');
+        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_tu_cham` DECIMAL(4,1) NULL');
+        DB::statement('ALTER TABLE `ket_qua_muc_a` MODIFY `diem_danh_gia` DECIMAL(4,1) NULL');
     }
 
     /**

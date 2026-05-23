@@ -25,12 +25,12 @@ return new class extends Migration
         });
 
         Schema::table('phieu_danh_gia', function (Blueprint $table) {
-            $table->decimal('diem_tieu_chi_chung', 3, 1)->nullable()->after('ma_don_vi');
-            $table->decimal('diem_thuc_hien_nhiem_vu', 3, 1)->nullable()->after('diem_tieu_chi_chung');
-            $table->decimal('tong_diem_tu_cham', 3, 1)->nullable()->after('diem_thuc_hien_nhiem_vu');
-            $table->decimal('diem_danh_gia_tieu_chi_chung', 3, 1)->nullable()->after('tong_diem_tu_cham');
-            $table->decimal('diem_danh_gia_thuc_hien_nhiem_vu', 3, 1)->nullable()->after('diem_danh_gia_tieu_chi_chung');
-            $table->decimal('tong_diem_danh_gia', 3, 1)->nullable()->after('diem_danh_gia_thuc_hien_nhiem_vu');
+            $table->decimal('diem_tieu_chi_chung', 4, 1)->nullable()->after('ma_don_vi');
+            $table->decimal('diem_thuc_hien_nhiem_vu', 4, 1)->nullable()->after('diem_tieu_chi_chung');
+            $table->decimal('tong_diem_tu_cham', 4, 1)->nullable()->after('diem_thuc_hien_nhiem_vu');
+            $table->decimal('diem_danh_gia_tieu_chi_chung', 4, 1)->nullable()->after('tong_diem_tu_cham');
+            $table->decimal('diem_danh_gia_thuc_hien_nhiem_vu', 4, 1)->nullable()->after('diem_danh_gia_tieu_chi_chung');
+            $table->decimal('tong_diem_danh_gia', 4, 1)->nullable()->after('diem_danh_gia_thuc_hien_nhiem_vu');
             $table->text('uu_diem')->nullable()->after('tong_diem_danh_gia');
             $table->text('khuyet_diem')->nullable()->after('uu_diem');
             $table->text('cap_tren_nhan_xet')->nullable()->after('khuyet_diem');

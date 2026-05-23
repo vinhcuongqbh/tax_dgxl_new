@@ -41,14 +41,12 @@ class UserController extends Controller
     public function create()
     {
         $gioi_tinh = GioiTinh::all();
-        $ngach = Ngach::where('ma_trang_thai', 1)->get();
-        $chuc_vu = ChucVu::where('ma_trang_thai', 1)->orderby('ma_chuc_vu','asc')->get();
+        $chuc_vu = ChucVu::where('ma_trang_thai', 1)->orderby('ma_chuc_vu', 'asc')->get();
         $don_vi = DonVi::where('ma_trang_thai', 1)->get();
         $roles = Role::whereNotIn('id', [1, 2])->orderby('id', 'asc')->pluck('name', 'name')->all();
 
         return view('congchuc.create', [
             'gioi_tinh' => $gioi_tinh,
-            'ngach' => $ngach,
             'chuc_vu' => $chuc_vu,
             'don_vi' => $don_vi,
             'roles' => $roles
@@ -74,7 +72,6 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->ngay_sinh = $request->ngay_sinh;
         $user->ma_gioi_tinh = $request->gioi_tinh;
-        $user->ma_ngach = $request->ngach;
         $user->ma_don_vi = $request->don_vi;
         $user->ma_phong = $request->phong;
         $user->email = $request->email;
@@ -94,7 +91,6 @@ class UserController extends Controller
         if (Auth::user()->so_hieu_cong_chuc == $id) {
             $user = User::where('so_hieu_cong_chuc', $id)->first();
             $gioi_tinh = GioiTinh::all();
-            $ngach = Ngach::where('ma_trang_thai', 1)->get();
             $chuc_vu = ChucVu::where('ma_trang_thai', 1)->get();
             $don_vi = DonVi::where('ma_trang_thai', 1)->get();
             $phong = Phong::where('ma_trang_thai', 1)
@@ -104,7 +100,6 @@ class UserController extends Controller
             return view('congchuc.show', [
                 'cong_chuc' => $user,
                 'gioi_tinh' => $gioi_tinh,
-                'ngach' => $ngach,
                 'chuc_vu' => $chuc_vu,
                 'don_vi' => $don_vi,
                 'phong' => $phong
@@ -120,8 +115,7 @@ class UserController extends Controller
     {
         $user = User::where('so_hieu_cong_chuc', $id)->first();
         $gioi_tinh = GioiTinh::all();
-        $ngach = Ngach::where('ma_trang_thai', 1)->get();
-        $chuc_vu = ChucVu::where('ma_trang_thai', 1)->orderby('ma_chuc_vu','asc')->get();
+        $chuc_vu = ChucVu::where('ma_trang_thai', 1)->orderby('ma_chuc_vu', 'asc')->get();
         $don_vi = DonVi::where('ma_trang_thai', 1)->get();
         $phong = Phong::where('ma_trang_thai', 1)
             ->where('ma_don_vi_cap_tren', $user->ma_don_vi)
@@ -132,7 +126,6 @@ class UserController extends Controller
         return view('congchuc.edit', [
             'cong_chuc' => $user,
             'gioi_tinh' => $gioi_tinh,
-            'ngach' => $ngach,
             'chuc_vu' => $chuc_vu,
             'don_vi' => $don_vi,
             'phong' => $phong,
@@ -160,7 +153,6 @@ class UserController extends Controller
         $user->name = $request->name;
         $user->ngay_sinh = $request->ngay_sinh;
         $user->ma_gioi_tinh = $request->gioi_tinh;
-        $user->ma_ngach = $request->ngach;
         $user->ma_chuc_vu = $request->chuc_vu;
         $user->ma_don_vi = $request->don_vi;
         $user->ma_phong = $request->phong;

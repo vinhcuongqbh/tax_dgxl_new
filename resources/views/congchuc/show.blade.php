@@ -8,8 +8,8 @@
             Thông tin Công chức
         </div>
         <div>
-            <button type="button" class="btn btn-primary text-nowrap" 
-            data-toggle="modal" data-target="#reset-pass">Đổi mật mã</button>
+            <button type="button" class="btn btn-primary text-nowrap" data-toggle="modal" data-target="#reset-pass">Đổi mật
+                mã</button>
         </div>
     </div>
 @stop
@@ -69,20 +69,6 @@
                                         <option value="{{ $gioi_tinh->ma_gioi_tinh }}"
                                             @if ($cong_chuc->ma_gioi_tinh == $gioi_tinh->ma_gioi_tinh) selected @endif>
                                             {{ $gioi_tinh->ten_gioi_tinh }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label" for="ngach">Ngạch</label>
-                            <div class="col-sm-9">
-                                <select id="ngach" name="ngach" class="form-control custom-select" disabled>
-                                    <option selected></option>
-                                    @foreach ($ngach as $ngach)
-                                        <option value="{{ $ngach->ma_ngach }}"
-                                            @if ($cong_chuc->ma_ngach == $ngach->ma_ngach) selected @endif>
-                                            {{ $ngach->ten_ngach }}
                                         </option>
                                     @endforeach
                                 </select>

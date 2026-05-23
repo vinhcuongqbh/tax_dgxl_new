@@ -41,7 +41,8 @@
                                     <tr>
                                         <td class="text-center">{{ $i++ }}</td>
                                         <td class="text-center">
-                                            {{ date('m', strtotime($danh_sach->thoi_diem_danh_gia)) }}/{{ date('Y', strtotime($danh_sach->thoi_diem_danh_gia)) }}
+                                            Quý
+                                            {{ ceil(date('m', strtotime($danh_sach->thoi_diem_danh_gia)) / 3) }}/{{ date('Y', strtotime($danh_sach->thoi_diem_danh_gia)) }}
                                         </td>
                                         </td>
                                         <td><a
@@ -53,7 +54,8 @@
                                         <td class="text-center">{{ $danh_sach->phong->ten_phong }}</td>
                                         <td class="text-center">{{ $danh_sach->don_vi->ten_don_vi }}</td>
                                         <td class="text-center">{{ $danh_sach->tong_diem_tu_cham }}</td>
-                                        <td class="text-center">{{ $danh_sach->ca_nhan_tu_xep_loai }} <br> {{ $danh_sach->ly_do->ly_do }}</td>
+                                        <td class="text-center">{{ $danh_sach->ca_nhan_tu_xep_loai }} <br>
+                                            {{ $danh_sach->ly_do->ly_do }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -46,7 +46,8 @@
                                                 <div class="">{{ $i++ }}</div>
                                             </td>
                                             <td class="text-center">
-                                                {{ date('m', strtotime($danh_sach->thoi_diem_danh_gia)) }}/{{ date('Y', strtotime($danh_sach->thoi_diem_danh_gia)) }}
+                                                Quý
+                                                {{ ceil(date('m', strtotime($danh_sach->thoi_diem_danh_gia)) / 3) }}/{{ date('Y', strtotime($danh_sach->thoi_diem_danh_gia)) }}
                                             </td>
                                             <td><a
                                                     href="{{ route('phieudanhgia.captren.create', $danh_sach->ma_phieu_danh_gia) }}">
@@ -92,7 +93,7 @@
                 scrollY: 1000,
                 dom: 'Bfrtip',
                 buttons: [{
-                        text: 'Trình Phê duyệt',
+                        text: 'Gửi TCCB',
                         className: 'bg-olive',
                         action: function(e, dt, node, config) {
                             window.location = '{{ route('phieudanhgia.captren.send') }}';

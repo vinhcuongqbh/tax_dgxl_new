@@ -70,20 +70,6 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label class="col-sm-3 col-form-label" for="ngach">Ngạch</label>
-                                <div class="col-sm-9">
-                                    <select id="ngach" name="ngach" class="form-control custom-select">
-                                        <option selected></option>
-                                        @foreach ($ngach as $ngach)
-                                            <option value="{{ $ngach->ma_ngach }}"
-                                                @if ($cong_chuc->ma_ngach == $ngach->ma_ngach) selected @endif>
-                                                {{ $ngach->ten_ngach }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label class="col-sm-3 col-form-label" for="chuc_vu">Chức vụ</label>
                                 <div class="col-sm-9">
                                     <select id="chuc_vu" name="chuc_vu" class="form-control custom-select">
@@ -135,9 +121,11 @@
                                 <div class="col-sm-9">
                                     <div class="form-check">
                                         @foreach ($roles as $role)
-                                            <input type="checkbox" id="{{ $role }}" class="form-check-input" name="roles[]"
-                                                value="{{ $role }}" {{ in_array($role, $userRoles) ? 'checked':'' }}>
-                                            <label class="form-check-label" for="{{ $role }}">{{ $role }}</label><br>
+                                            <input type="checkbox" id="{{ $role }}" class="form-check-input"
+                                                name="roles[]" value="{{ $role }}"
+                                                {{ in_array($role, $userRoles) ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="{{ $role }}">{{ $role }}</label><br>
                                         @endforeach
                                     </div>
                                     {{-- <select name="roles[]" class="form-control custom-select" multiple>
@@ -151,7 +139,9 @@
                                         </option>
                                         @endforeach
                                     </select> --}}
-                                    @error('roles') <span class="text-danger">{{ $message }}</span> @enderror
+                                    @error('roles')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -164,8 +154,7 @@
                             </div>
                             <div class="col-sm-9 d-flex justify-content-end p-0">
                                 <button type="submit" class="btn bg-olive text-nowrap col-3 mx-2">Cập nhật</button>
-                                <a class="btn bg-warning text-white text-nowrap col-3"
-                                    href="{{ route('congchuc') }}">Quay
+                                <a class="btn bg-warning text-white text-nowrap col-3" href="{{ route('congchuc') }}">Quay
                                     lại</a>
                             </div>
                         </div>

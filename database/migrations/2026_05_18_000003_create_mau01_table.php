@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('loai_tieu_chi')->nullable();
             $table->string('tt')->nullable();
             $table->string('noi_dung');
-            $table->decimal('diem_toi_da', 3, 1);
+            $table->decimal('diem_toi_da', 4, 1);
             $table->timestamps();
         });
     }

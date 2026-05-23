@@ -11,13 +11,13 @@
         <div class="row">
             <div class="col-12">
                 <form action="{{ route('phieudanhgia.captren.store', $phieu_danh_gia->ma_phieu_danh_gia) }}" method="post"
-                    id="maudanhgia-captrendanhgia">
+                    id="mauphieudanhgia">
                     @csrf
                     <div class="card card-default">
                         <div class="card-body">
                             {{-- Phần Tiêu đề --}}
                             <table class="table table-borderless">
-                                <h6 class="font-italic text-bold text-right">{{ $thong_tin_mau_phieu['ten_mau'] }}</h6>
+                                <h6 class="font-italic text-bold text-right">Mẫu số 01</h6>
                                 <tbody>
                                     <tr>
                                         <td class="text-center py-0">CỤC THUẾ</td>
@@ -31,26 +31,28 @@
                             </table>
                             <br>
                             <br>
-                            <h4 class="text-center text-bold my-0">PHIẾU ĐÁNH GIÁ, XẾP LOẠI CHẤT LƯỢNG HẰNG THÁNG</h4>
-                            <h6 class="text-center font-italic my-0">(Áp dụng đối với
-                                {{ $thong_tin_mau_phieu['doi_tuong_ap_dung'] }})
-                            </h6>
-                            <h6 class="text-center align-middle my-0">Tháng
-                                {{ $thoi_diem_danh_gia->month }}/{{ $thoi_diem_danh_gia->year }}
-                            </h6>
+                            <h4 class="text-center text-bold my-0">PHIẾU THEO DÕI, ĐÁNH GIÁ CÔNG CHỨC</h4>
+                            <h6 class="text-center align-middle my-0"><i>(Kỳ theo dõi, đánh giá: Quý
+                                    <input type="number" class="text-center" id="quy_danh_gia" name="quy_danh_gia"
+                                        min="1" max="{{ ceil($thoi_diem_danh_gia->month / 3) }}"
+                                        value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" readonly> năm <input
+                                        type="number" class="text-center" id="nam_danh_gia" name="nam_danh_gia"
+                                        min="1" max="{{ $thoi_diem_danh_gia->year }}"
+                                        value="{{ $thoi_diem_danh_gia->year }}" readonly>
+                                    )
+                                </i></h6>
                             <br>
 
                             {{-- Phần Thông tin cá nhân --}}
-                            <h6>&emsp;&emsp;&emsp;- Họ và tên: {{ $phieu_danh_gia->user->name }}</h6>
-                            @if ($phieu_danh_gia->mau_phieu_danh_gia == 'mau01A')
-                                <h6>&emsp;&emsp;&emsp;- Chức vụ: {{ $phieu_danh_gia->chuc_vu->ten_chuc_vu }}</h6>
-                            @endif
-                            <h6>&emsp;&emsp;&emsp;- Đơn vị: {{ $phieu_danh_gia->phong->ten_phong }},
-                                {{ $phieu_danh_gia->don_vi->ten_don_vi }}</h6>
+                            <h6>Họ và tên: {{ $phieu_danh_gia->user->name }}</h6>
+                            <h6>Chức vụ, chức danh: {{ $phieu_danh_gia->user->chuc_vu->ten_chuc_vu }}</h6>
+                            <h6>Đơn vị công tác: {{ $phieu_danh_gia->user->phong->ten_phong }},
+                                {{ $phieu_danh_gia->user->don_vi->ten_don_vi }}
+                            </h6>
                             <br>
 
-                            {{-- Phần A --}}
-                            <h6 class="text-bold">&emsp;&emsp;&emsp;A. Điểm đánh giá</h6>
+                            {{-- Phần I --}}
+                            <h6 class="text-bold">I. KẾT QUẢ THEO DÕI, ĐÁNH GIÁ THEO TIÊU CHÍ CHUNG</h6>
                             {{-- Bảng tiêu chí đánh giá --}}
                             <table id="danh-gia" class="table table-bordered">
                                 <colgroup>
@@ -62,13 +64,10 @@
                                 </colgroup>
                                 <thead class="text-center">
                                     <tr>
-                                        <th class="align-middle" rowspan="2">STT</th>
-                                        <th class="align-middle" rowspan="2">Nội dung đánh giá</th>
-                                        <th class="align-middle" rowspan="2">Điểm tối đa</th>
-                                        <th class="align-middle" colspan="2">Kết quả đánh giá</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="align-middle">Điểm cá nhân tự chấm</th>
+                                        <th class="align-middle">TT</th>
+                                        <th class="align-middle">Tiêu chí chấm điểm</th>
+                                        <th class="align-middle">Điểm tối đa</th>
+                                        <th class="align-middle">Điểm do cá nhân tự chấm</th>
                                         <th class="align-middle">Cấp có thẩm quyền đánh giá</th>
                                     </tr>
                                 </thead>
@@ -76,9 +75,7 @@
                                     @foreach ($ket_qua_muc_A as $ket_qua)
                                         @php
                                             if (
-                                                $ket_qua->loai_tieu_chi == 'muc_lon' ||
                                                 $ket_qua->loai_tieu_chi == 'muc_nho' ||
-                                                $ket_qua->loai_tieu_chi == 'lua_chon' ||
                                                 $ket_qua->loai_tieu_chi == 'tong_diem'
                                             ) {
                                                 $tinh_diem = 0;
@@ -100,6 +97,7 @@
                                                 class="text-center align-middle @if ($tinh_diem == 0) text-bold @endif">
                                                 {{ $ket_qua->diem_toi_da }}
                                             </td>
+
                                             {{-- Cột Điểm cá nhân tự chấm --}}
                                             @if ($ket_qua->loai_tieu_chi != 'phuong_an')
                                                 <td
@@ -124,133 +122,91 @@
                                                         @if ($ket_qua->diem_toi_da == $diem_tu_cham) checked @else disabled @endif></label>
                                                 </td>
                                             @endif
+
                                             {{-- Cột Điểm cấp trên đánh giá --}}
-                                            @if ($ket_qua->loai_tieu_chi != 'phuong_an')
-                                                <td class="align-middle @if ($tinh_diem == 0) text-bold @endif">
-                                                    <input type="number" id="{{ $ket_qua->ma_tieu_chi }}"
-                                                        name="{{ $ket_qua->ma_tieu_chi }}" min="0"
-                                                        max="{{ $ket_qua->diem_toi_da }}"
-                                                        value="@php if (isset($ket_qua->diem_danh_gia)) { echo $ket_qua->diem_danh_gia; } else { echo $ket_qua->diem_tu_cham; } @endphp"
-                                                        class="text-center form-control pl-4"
-                                                        @if ($tinh_diem == 0) readonly @endif
-                                                        onchange="tong_{{ $ket_qua->tieu_chi_me }}(); tong_100(); tong_200(); tong_300(); tong_cong(); tu_xep_loai()">
-                                                </td>
-                                            @else
-                                                @php
-                                                    $diem_tu_cham = $ket_qua
-                                                        ->where('ma_tieu_chi', $ket_qua->tieu_chi_me)
-                                                        ->where('ma_phieu_danh_gia', $ket_qua->ma_phieu_danh_gia)
-                                                        ->first()->diem_tu_cham;
-                                                    $diem_danh_gia = $ket_qua
-                                                        ->where('ma_tieu_chi', $ket_qua->tieu_chi_me)
-                                                        ->where('ma_phieu_danh_gia', $ket_qua->ma_phieu_danh_gia)
-                                                        ->first()->diem_danh_gia;
-                                                @endphp
-                                                <td class="align-middle text-center">
-                                                    <input class="m-0" type="radio" name="{{ $ket_qua->tieu_chi_me }}"
-                                                        value="{{ $ket_qua->diem_toi_da }}"
-                                                        id="{{ $ket_qua->ma_tieu_chi }}"
-                                                        @php
-if (isset($diem_danh_gia)) {
-                                                                if ($ket_qua->diem_toi_da == $diem_danh_gia) echo "checked";
-                                                            } else {
-                                                                if ($ket_qua->diem_toi_da == $diem_tu_cham) echo "checked";
-                                                            } @endphp
-                                                        onchange="tong_{{ $ket_qua->tieu_chi_me }}(); tong_100(); tong_200(); tong_300(); tong_cong(); tu_xep_loai()"></label>
-                                                </td>
-                                            @endif
+                                            <td class="align-middle @if ($tinh_diem == 0) text-bold @endif">
+                                                <input type="number" id="{{ $ket_qua->ma_tieu_chi }}"
+                                                    name="{{ $ket_qua->ma_tieu_chi }}" min="0"
+                                                    max="{{ $ket_qua->diem_toi_da }}" step="0.5"
+                                                    value="@php if (isset($ket_qua->diem_danh_gia)) { echo $ket_qua->diem_danh_gia; } else { echo $ket_qua->diem_tu_cham; } @endphp"
+                                                    class="text-center form-control pl-4"
+                                                    onchange="tong_{{ $ket_qua->tieu_chi_me }}(); tong_tc_900(); tong_cong(); tu_xep_loai();"
+                                                    @if ($tinh_diem == 0) readonly @endif>
+                                            </td>
                                         </tr>
                                     @endforeach
+                                </tbody>
+                            </table>
+                            <br>
+
+                            {{-- Mục II --}}
+                            <h6 class="text-bold">II. TỔNG HỢP KẾT QUẢ THEO DÕI, ĐÁNH GIÁ CÔNG CHỨC</h6>
+                            <table id="tong_hop" class="table table-bordered">
+                                <colgroup>
+                                    <col style="width:76%;">
+                                    <col style="width:12%;">
+                                    <col style="width:12%;">
+                                </colgroup>
+                                <tbody>
                                     <tr>
-                                        <td></td>
-                                        <td class="align-middle text-bold">TỔNG CỘNG</td>
-                                        <td></td>
-                                        <td class="align-middle text-center text-bold" id="tong_diem_tu_danh_gia">
+                                        <td>1. Điểm tiêu chí chung:</td>
+                                        <td class="align-middle text-center text-bold">
+                                            {{ $phieu_danh_gia->diem_tieu_chi_chung }}
+                                        </td>
+                                        <td class="align-middle text-center text-bold">
+                                            <input type="number" id="diem_danh_gia_tieu_chi_chung"
+                                                name="diem_danh_gia_tieu_chi_chung"
+                                                value="@php if (isset($phieu_danh_gia->diem_danh_gia_tieu_chi_chung)) { echo $phieu_danh_gia->diem_danh_gia_tieu_chi_chung; } else { echo $phieu_danh_gia->diem_tieu_chi_chung; } @endphp"
+                                                class="text-center form-control pl-4" min="0" max="30"
+                                                step="0.5" readonly>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2. Điểm tiêu chí kết quả thực hiện nhiệm vụ:</td>
+                                        <td class="align-middle text-center text-bold">
+                                            {{ $phieu_danh_gia->diem_thuc_hien_nhiem_vu }}</td>
+                                        <td class="align-middle text-center text-bold">
+                                            <input type="number" id="diem_danh_gia_thuc_hien_nhiem_vu"
+                                                name="diem_danh_gia_thuc_hien_nhiem_vu"
+                                                value="@php if (isset($phieu_danh_gia->diem_danh_gia_thuc_hien_nhiem_vu)) { echo $phieu_danh_gia->diem_danh_gia_thuc_hien_nhiem_vu; } else { echo $phieu_danh_gia->diem_thuc_hien_nhiem_vu; } @endphp"
+                                                class="text-center form-control pl-4" min="0" max="70"
+                                                step="0.5" onchange="tong_cong(); tu_xep_loai();">
+                                        </td>
+
+                                    </tr>
+                                    <tr>
+                                        <td>3. Tổng điểm theo dõi, đánh giá công chức:</td>
+                                        <td class="align-middle text-center text-bold">
                                             {{ $phieu_danh_gia->tong_diem_tu_cham }}
                                         </td>
-                                        <td class="align-middle text-center text-bold" id="tong_cong">
-                                            @php
-                                                if (isset($phieu_danh_gia->tong_diem_danh_gia)) {
-                                                    echo $phieu_danh_gia->tong_diem_danh_gia;
-                                                } else {
-                                                    echo $phieu_danh_gia->tong_diem_tu_cham;
-                                                }
-                                            @endphp
+                                        <td class="align-middle text-center text-bold">
+                                            <input type="number" id="tong_diem_danh_gia" name="tong_diem_danh_gia"
+                                                value="@php if (isset($phieu_danh_gia->tong_diem_danh_gia)) { echo $phieu_danh_gia->tong_diem_danh_gia; } else { echo $phieu_danh_gia->tong_diem_tu_cham; } @endphp"
+                                                class="text-center form-control pl-4" min="0" max="100"
+                                                step="0.5" readonly>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <br>
-                            <h6 class="text-bold">&emsp;&emsp;&emsp;B. Số liệu thống kê kết quả thực hiện nhiệm vụ</h6>
-                            <h6>&emsp;&emsp;&emsp;- Nhiệm vụ theo chương trình, kế hoạch và nhiệm vụ phát sinh:
-                                <i>(Thống kê
-                                    các
-                                    nhiệm vụ và đánh dấu X vào một trong 4 ô sau cùng tương ứng)</i>
-                            </h6>
-                            <table id="nhiem-vu" class="table table-bordered">
-                                <colgroup>
-                                    <col style="width:5%;">
-                                    <col style="width:45%;">
-                                    <col style="width:10%;">
-                                    <col style="width:10%;">
-                                    <col style="width:10%;">
-                                    <col style="width:10%;">
-                                    <col style="width:10%;">
-                                </colgroup>
-                                <thead>
-                                    <tr class="text-center">
-                                        <th class="align-middle text-bold">TT</th>
-                                        <th class="align-middle text-bold">Nhiệm vụ</th>
-                                        <th class="align-middle text-bold">Nhiệm vụ phát sinh (đánh dấu x)</th>
-                                        <th class="align-middle text-bold">Trước hạn</th>
-                                        <th class="align-middle text-bold">Đúng hạn</th>
-                                        <th class="align-middle text-bold">Quá hạn</th>
-                                        <th class="align-middle text-bold">Lùi, chưa triển khai</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($ket_qua_muc_B as $ket_qua_muc_B)
-                                        <tr>
-                                            <td>+</td>
-                                            <td class="text-justify">
-                                                <p>{{ $ket_qua_muc_B->noi_dung }}</p>
-                                            </td>
-                                            <td><input type="checkbox" value="1"
-                                                    @if ($ket_qua_muc_B->nhiem_vu_phat_sinh == 1) checked @else disabled @endif></td>
-                                            <td><input type="radio" value="truoc_han"
-                                                    @if ($ket_qua_muc_B->hoan_thanh_nhiem_vu == 'truoc_han') checked @else disabled @endif></td>
-                                            <td><input type="radio" value="dung_han"
-                                                    @if ($ket_qua_muc_B->hoan_thanh_nhiem_vu == 'dung_han') checked @else disabled @endif></td>
-                                            <td><input type="radio" value="qua_han"
-                                                    @if ($ket_qua_muc_B->hoan_thanh_nhiem_vu == 'qua_han') checked @else disabled @endif></td>
-                                            <td><input type="radio" value="lui_han"
-                                                    @if ($ket_qua_muc_B->hoan_thanh_nhiem_vu == 'lui_han') checked @else disabled @endif></td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+
+                            <h6>4. Ưu điểm:</h6>
+                            <textarea id="uu_diem" name="uu_diem" rows="5" style="width: 100%;" disabled>{{ $phieu_danh_gia->uu_diem }}</textarea>
                             <br>
-                            <h6>&emsp;&emsp;&emsp;- Các nhiệm vụ có sáng kiến, đổi mới, sáng tạo, mang lại hiệu quả được
-                                áp dụng điểm thưởng: <i>(mô tả tóm tắt cách thức, hiệu quả mang lại)</i></h6>
-                            <div class="form-group">
-                                <textarea class="form-control" id="ly_do_diem_cong" name="ly_do_diem_cong" rows="7" readonly>
-@if ($ly_do_diem_cong)
-{{ $ly_do_diem_cong->noi_dung }}
-@endif
-</textarea>
-                            </div>
-                            <h6>&emsp;&emsp;&emsp;- Lý do áp dụng điểm trừ: <i>(mô tả tóm tắt)</i></h6>
-                            <div class="form-group">
-                                <textarea class="form-control" id="ly_do_diem_tru" name="ly_do_diem_tru" rows="7" readonly>
-@if ($ly_do_diem_tru)
-{{ $ly_do_diem_tru->noi_dung }}
-@endif
-</textarea>
-                            </div>
+
+                            <h6>5. Hạn chế, khuyết điểm:</h6>
+                            <textarea id="khuyet_diem" name="khuyet_diem" rows="5" style="width: 100%;" disabled>{{ $phieu_danh_gia->khuyet_diem }}</textarea>
+                            <br>
+
+                            <h6>6. Ý kiến nhận xét của cấp có thẩm quyền theo dõi, đánh giá:</h6>
+                            <textarea id="cap_tren_nhan_xet" name="cap_tren_nhan_xet" rows="5" style="width: 100%;">{{ $phieu_danh_gia->cap_tren_nhan_xet ??
+                                'Nhất trí với ý kiến tự đánh giá của ông/bà ' . $phieu_danh_gia->user->name . '.' }}</textarea>
+                            <br>
 
                             {{-- Mục Cá nhân tự xếp loại --}}
-                            <h6 class="text-bold">&emsp;&emsp;&emsp;C. Cá nhân tự xếp loại: <i>(Chọn 01 trong 04
-                                    ô tương ứng dưới đây)</i></h6>
+                            <h6 class="text-bold">C. Cá nhân tự xếp loại: <i>(Chọn 01 trong 04 ô
+                                    tương ứng dưới đây)</i></h6>
+                            {{-- Danh sách xếp loại --}}
                             <table class="table table-borderless">
                                 <colgroup>
                                     <col style="width:20%;">
@@ -263,48 +219,59 @@ if (isset($diem_danh_gia)) {
                                 </colgroup>
                                 <tbody>
                                     <tr>
+                                        {{-- Xếp loại A --}}
                                         <td class="text-center">
-                                            <input type="radio" name="tu_danh_gia" value="A" class="form-control"
-                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == $xep_loai->where('ma_xep_loai', 'A')->first()->ma_xep_loai) checked @else disabled @endif>
-                                            <b>Hoàn thành suất sắc <br>nhiệm vụ<br>(Loại
-                                                A)</b><br>{{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
-                                            điểm trở lên
+                                            <input type="radio" name="ca_nhan_tu_xep_loai" value="A"
+                                                class="form-control"
+                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == 'A') checked @else disabled @endif>
+                                            <b>Hoàn thành suất sắc <br>nhiệm
+                                                vụ</b><br>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
+                                            điểm trở lên)
                                         </td>
                                         <td></td>
+                                        {{-- Xếp loại B --}}
                                         <td class="text-center">
-                                            <input type="radio" name="tu_danh_gia" value="B" class="form-control"
-                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == $xep_loai->where('ma_xep_loai', 'B')->first()->ma_xep_loai) checked @else disabled @endif>
-                                            <b>Hoàn thành tốt <br>nhiệm vụ<br>(Loại B)</b><br>Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }} điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu - 1 }}
-                                            điểm
+                                            <input type="radio" name="ca_nhan_tu_xep_loai" value="B"
+                                                class="form-control"
+                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == 'B') checked @else disabled @endif>
+                                            <b>Hoàn thành tốt <br>nhiệm vụ</b><br>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
+                                            điểm)
                                         </td>
                                         <td></td>
+                                        {{-- Xếp loại C --}}
                                         <td class="text-center">
-                                            <input type="radio" name="tu_danh_gia" value="C" class="form-control"
-                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == $xep_loai->where('ma_xep_loai', 'C')->first()->ma_xep_loai) checked @else disabled @endif>
-                                            <b>Hoàn thành <br>nhiệm vụ<br>(Loại
-                                                C)</b><br>{{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
-                                            điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu - 1 }}
-                                            điểm
+                                            <input type="radio" name="ca_nhan_tu_xep_loai" value="C"
+                                                class="form-control"
+                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == 'C') checked @else disabled @endif>
+                                            <b>Hoàn thành <br>nhiệm vụ<br></b>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
+                                            điểm)
                                         </td>
                                         <td></td>
+                                        {{-- Xếp loại D --}}
                                         <td class="text-center">
-                                            <input type="radio" name="tu_danh_gia" value="D" class="form-control"
-                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == $xep_loai->where('ma_xep_loai', 'D')->first()->ma_xep_loai) checked @else disabled @endif>
-                                            <b>Không hoàn thành <br>nhiệm vụ<br>(Loại D)</b><br>Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu - 1 }} điểm
-                                            trở xuống
+                                            <input type="radio" name="ca_nhan_tu_xep_loai" value="D"
+                                                class="form-control"
+                                                @if ($phieu_danh_gia->ca_nhan_tu_xep_loai == 'D') checked @else disabled @endif>
+                                            <b>Không hoàn thành <br>nhiệm vụ</b><br>(Dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
+                                            điểm trở xuống)
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <br>
 
-                            {{-- Mục Cấp trên xếp loại --}}
-                            <h6 class="text-bold">&emsp;&emsp;&emsp;D. Cấp trên xếp loại: <i>(Chọn 01 trong 04
-                                    ô tương ứng dưới đây)</i></h6>
+                            {{-- Mục cấp trên đánh giá, xếp loại --}}
+                            <h6 class="text-bold">D. Cấp trên đánh giá, xếp loại: <i>(Chọn 01 trong 04 ô
+                                    tương ứng dưới đây)</i></h6>
+                            {{-- Danh sách xếp loại --}}
                             <table class="table table-borderless">
                                 <colgroup>
                                     <col style="width:20%;">
@@ -321,44 +288,48 @@ if (isset($diem_danh_gia)) {
                                         <td class="text-center">
                                             <input type="radio" name="cap_tren_xep_loai" value="A"
                                                 id="hoan_thanh_xuat_sac" class="form-control">
-                                            <b>Hoàn thành suất sắc <br>nhiệm vụ<br>(Loại
-                                                A)</b><br>{{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
-                                            điểm trở lên
+                                            <b>Hoàn thành suất sắc <br>nhiệm
+                                                vụ</b><br>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
+                                            điểm trở lên)
                                         </td>
                                         <td></td>
                                         {{-- Xếp loại B --}}
                                         <td class="text-center">
                                             <input type="radio" name="cap_tren_xep_loai" value="B"
                                                 id="hoan_thanh_tot" class="form-control">
-                                            <b>Hoàn thành tốt <br>nhiệm vụ<br>(Loại B)</b><br>Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }} điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu - 1 }}
-                                            điểm
+                                            <b>Hoàn thành tốt <br>nhiệm vụ</b><br>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
+                                            điểm)
                                         </td>
                                         <td></td>
                                         {{-- Xếp loại C --}}
                                         <td class="text-center">
                                             <input type="radio" name="cap_tren_xep_loai" value="C"
                                                 id="hoan_thanh" class="form-control">
-                                            <b>Hoàn thành <br>nhiệm vụ<br>(Loại C)</b><br>Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }} điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu - 1 }} điểm
+                                            <b>Hoàn thành <br>nhiệm vụ<br></b>(Từ
+                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
+                                            điểm)
                                         </td>
                                         <td></td>
                                         {{-- Xếp loại D --}}
                                         <td class="text-center">
                                             <input type="radio" name="cap_tren_xep_loai" value="D"
                                                 id="khong_hoan_thanh" class="form-control">
-                                            <b>Không hoàn thành <br>nhiệm vụ<br>(Loại D)</b><br>Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu - 1 }} điểm
-                                            trở xuống
+                                            <b>Không hoàn thành <br>nhiệm vụ</b><br>(Dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
+                                            điểm trở xuống)
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <br>
 
-
+                            {{-- Phần Thông tin Người ký --}}
                             <table class="table table-borderless">
                                 <colgroup>
                                     <col style="width:40%;">
@@ -367,20 +338,24 @@ if (isset($diem_danh_gia)) {
                                 </colgroup>
                                 <tbody>
                                     <tr>
-                                        <td class="py-0"></td>
-                                        <td class="py-0"></td>
-                                        <td class="text-center font-italic py-0">Ngày {{ $ngay_thuc_hien_danh_gia->day }}
+                                        <td class="text-center font-italic py-0">Ngày
+                                            {{ $ngay_thuc_hien_danh_gia->day }}
                                             tháng
-                                            {{ $ngay_thuc_hien_danh_gia->month }} năm {{ $ngay_thuc_hien_danh_gia->year }}
+                                            {{ $ngay_thuc_hien_danh_gia->month }} năm
+                                            {{ $ngay_thuc_hien_danh_gia->year }}
                                         </td>
+                                        <td class="py-0"></td>
+                                        <td class="text-center font-italic py-0">Ngày ... tháng ... năm ...
                                     </tr>
                                     <tr>
-                                        <td class="text-center text-bold py-0">LÃNH ĐẠO ĐƠN VỊ</td>
+                                        <td class="text-center text-bold py-0">CÔNG CHỨC TỰ ĐÁNH
+                                            GIÁ
+                                            <br><br><br><br><br>
+                                            {{ $phieu_danh_gia->user->name }}
+                                        </td>
                                         <td class="py-0"></td>
                                         <td class="text-center text-bold py-0">
-                                            NGƯỜI TỰ ĐÁNH GIÁ
-                                            <br><br><br><br><br>
-                                            {{ $phieu_danh_gia->name }}
+                                            CẤP CÓ THẨM QUYỀN<br>THEO DÕI, ĐÁNH GIÁ
                                         </td>
                                     </tr>
                                 </tbody>
@@ -389,16 +364,12 @@ if (isset($diem_danh_gia)) {
                         </div>
                     </div>
                     <!-- /.card -->
-                    <div class="text-right">
-                        <a href="{{ route('phieudanhgia.captren.sendback', $phieu_danh_gia->ma_phieu_danh_gia) }}">
-                            <button type="button" class="btn bg-warning text-nowrap mb-2" id="sendBack">GỬI
-                                TRẢ</button>
-                        </a>
-                        <button type="submit" class="btn bg-olive text-nowrap mb-2 ml-2" id="submitForm">ĐÁNH
-                            GIÁ</button>
 
+                    {{-- Nút Lưu --}}
+                    <div class="text-right">
+                        <button type="submit" class="btn bg-olive text-nowrap mb-2 ml-2 col-1" name="submitForm"
+                            value="save">Lưu</button>
                     </div>
-                    <input type="hidden" name="mau_phieu_danh_gia" value="{{ $phieu_danh_gia->ma_phieu_danh_gia }}">
                 </form>
                 <!-- /.card-body -->
             </div>
@@ -414,10 +385,6 @@ if (isset($diem_danh_gia)) {
         table.dataTable tbody tr.selected>* {
             box-shadow: inset 0 0 0 9999px rgb(184, 184, 184) !important;
         }
-
-        input[type="checkbox"] {
-            pointer-events: none;
-        }
     </style>
 @stop
 
@@ -426,188 +393,57 @@ if (isset($diem_danh_gia)) {
     <script src="/plugins/jquery-validation/jquery.validate.min.js"></script>
     <script src="/plugins/jquery-validation/additional-methods.min.js"></script>
 
+    {{-- Tổng điểm của tiêu chí mẹ, Tổng điểm của các Mục lớn, Tổng điểm cuối cùng --}}
     <script>
-        function tong_tc_110() {
-            let tieu_chi_110 = parseInt(document.getElementById("tc_110").value);
-            let tieu_chi_111 = parseInt(document.getElementById("tc_111").value);
-            let tieu_chi_112 = parseInt(document.getElementById("tc_112").value);
-            let tieu_chi_113 = parseInt(document.getElementById("tc_113").value);
-            let tieu_chi_114 = parseInt(document.getElementById("tc_114").value);
-            tieu_chi_110 = tieu_chi_111 + tieu_chi_112 + tieu_chi_113 + tieu_chi_114;
-            document.getElementById("tc_110").value = tieu_chi_110;
-        }
-
-        function tong_tc_130() {
-            let tieu_chi_130 = parseInt(document.getElementById("tc_130").value);
-            let tieu_chi_131 = parseInt(document.getElementById("tc_131").value);
-            let tieu_chi_132 = parseInt(document.getElementById("tc_132").value);
-            let tieu_chi_133 = parseInt(document.getElementById("tc_133").value);
-            let tieu_chi_134 = parseInt(document.getElementById("tc_134").value);
-            tieu_chi_130 = tieu_chi_131 + tieu_chi_132 + tieu_chi_133 + tieu_chi_134;
-            document.getElementById("tc_130").value = tieu_chi_130;
-        }
-
-        function tong_tc_150() {
-            let tieu_chi_150 = parseInt(document.getElementById("tc_150").value);
-            let tieu_chi_151 = parseInt(document.getElementById("tc_151").value);
-            let tieu_chi_152 = parseInt(document.getElementById("tc_152").value);
-            let tieu_chi_153 = parseInt(document.getElementById("tc_153").value);
-            let tieu_chi_154 = parseInt(document.getElementById("tc_154").value);
-            tieu_chi_150 = tieu_chi_151 + tieu_chi_152 + tieu_chi_153 + tieu_chi_154;
-            document.getElementById("tc_150").value = tieu_chi_150;
-
-        }
-
-        function tong_tc_170() {
-            let tieu_chi_170 = parseInt(document.getElementById("tc_170").value);
-            let tieu_chi_171 = parseInt(document.getElementById("tc_171").value);
-            let tieu_chi_172 = parseInt(document.getElementById("tc_172").value);
-            let tieu_chi_173 = parseInt(document.getElementById("tc_173").value);
-            tieu_chi_170 = tieu_chi_171 + tieu_chi_172 + tieu_chi_173;
-            document.getElementById("tc_170").value = tieu_chi_170;
-        }
-
-        function tong_tc_210() {
-            let tieu_chi_210 = parseInt(document.getElementById("tc_210").value);
-            let tieu_chi_211 = parseInt(document.getElementById("tc_211").value);
-            let tieu_chi_212 = parseInt(document.getElementById("tc_212").value);
-            let tieu_chi_213 = parseInt(document.getElementById("tc_213").value);
-            let tieu_chi_214 = parseInt(document.getElementById("tc_214").value);
-            let tieu_chi_215 = parseInt(document.getElementById("tc_215").value);
-            let tieu_chi_216 = parseInt(document.getElementById("tc_216").value);
-            let tieu_chi_217;
-            if (document.getElementById("tc_217") != null) {
-                tieu_chi_217 = parseInt(document.getElementById("tc_217").value);
-            } else {
-                tieu_chi_217 = 0;
-            }
-            let tieu_chi_218;
-            if (document.getElementById("tc_218") != null) {
-                tieu_chi_218 = parseInt(document.getElementById("tc_218").value);
-            } else {
-                tieu_chi_218 = 0;
-            }
-            let tieu_chi_219;
-            if (document.getElementById("tc_219") != null) {
-                tieu_chi_219 = parseInt(document.getElementById("tc_219").value);
-            } else {
-                tieu_chi_219 = 0;
-            }
-            let tieu_chi_220;
-            if (document.getElementById("tc_220") != null) {
-                tieu_chi_220 = parseInt(document.getElementById("tc_220").value);
-            } else {
-                tieu_chi_220 = 0;
-            }
-            tieu_chi_210 = tieu_chi_211 + tieu_chi_212 + tieu_chi_213 + tieu_chi_214 + tieu_chi_215 + tieu_chi_216 +
-                tieu_chi_217 + tieu_chi_218 + tieu_chi_219 + tieu_chi_220;
-            document.getElementById("tc_210").value = tieu_chi_210;
-        }
-
-        function tong_tc_230() {
-            var tieu_chi_230 = document.querySelector('input[name="tc_230"]:checked').value;
-            document.getElementById("tc_230").value = tieu_chi_230;
-        }
-
-        function tong_100() {
-            let tieu_chi_100 = parseInt(document.getElementById("tc_100").value);
-            let tieu_chi_110 = parseInt(document.getElementById("tc_110").value);
-            let tieu_chi_130 = parseInt(document.getElementById("tc_130").value);
-            let tieu_chi_150 = parseInt(document.getElementById("tc_150").value);
-            let tieu_chi_170 = parseInt(document.getElementById("tc_170").value);
-            tieu_chi_100 = tieu_chi_110 + tieu_chi_130 + tieu_chi_150 + tieu_chi_170;
+        function tong_tc_100() {
+            let tieu_chi_100 = parseFloat(document.getElementById("tc_100").value);
+            let tieu_chi_101 = parseFloat(document.getElementById("tc_101").value);
+            let tieu_chi_102 = parseFloat(document.getElementById("tc_102").value);
+            tieu_chi_100 = tieu_chi_101 + tieu_chi_102;
             document.getElementById("tc_100").value = tieu_chi_100;
         }
 
-        function tong_200() {
-            let tieu_chi_200 = parseInt(document.getElementById("tc_200").value);
-            let tieu_chi_210 = parseInt(document.getElementById("tc_210").value);
-            let tieu_chi_230 = parseInt(document.getElementById("tc_230").value);
-            tieu_chi_200 = tieu_chi_210 + tieu_chi_230;
+        function tong_tc_200() {
+            let tieu_chi_200 = parseFloat(document.getElementById("tc_200").value);
+            let tieu_chi_201 = parseFloat(document.getElementById("tc_201").value);
+            let tieu_chi_202 = parseFloat(document.getElementById("tc_202").value);
+            let tieu_chi_203 = parseFloat(document.getElementById("tc_203").value);
+            let tieu_chi_204 = parseFloat(document.getElementById("tc_204").value);
+            tieu_chi_200 = tieu_chi_201 + tieu_chi_202 + tieu_chi_203 + tieu_chi_204;
             document.getElementById("tc_200").value = tieu_chi_200;
         }
 
-        function tong_300() {
-            let tieu_chi_300 = parseInt(document.getElementById("tc_300").value);
-            let tieu_chi_100 = parseInt(document.getElementById("tc_100").value);
-            let tieu_chi_200 = parseInt(document.getElementById("tc_200").value);
-            tieu_chi_300 = tieu_chi_100 + tieu_chi_200;
+        function tong_tc_300() {
+            let tieu_chi_300 = parseFloat(document.getElementById("tc_300").value);
+            let tieu_chi_301 = parseFloat(document.getElementById("tc_301").value);
+            let tieu_chi_302 = parseFloat(document.getElementById("tc_302").value);
+            let tieu_chi_303 = parseFloat(document.getElementById("tc_303").value);
+            let tieu_chi_304 = parseFloat(document.getElementById("tc_304").value);
+            tieu_chi_300 = tieu_chi_301 + tieu_chi_302 + tieu_chi_303 + tieu_chi_304;
             document.getElementById("tc_300").value = tieu_chi_300;
         }
 
-        function tong_cong() {
-            let tong_cong = parseInt(document.getElementById("tong_cong").value);
-            let tieu_chi_300 = parseInt(document.getElementById("tc_300").value);
-            let tieu_chi_400 = parseInt(document.getElementById("tc_400").value);
-            let tieu_chi_500 = parseInt(document.getElementById("tc_500").value);
-            tong_cong = tieu_chi_300 + tieu_chi_400 - tieu_chi_500;
-            document.getElementById("tong_cong").innerHTML = tong_cong;
+        function tong_tc_900() {
+            let tieu_chi_900 = parseFloat(document.getElementById("tc_900").value);
+            let tieu_chi_100 = parseFloat(document.getElementById("tc_100").value);
+            let tieu_chi_200 = parseFloat(document.getElementById("tc_200").value);
+            let tieu_chi_300 = parseFloat(document.getElementById("tc_300").value);
+            tieu_chi_900 = tieu_chi_100 + tieu_chi_200 + tieu_chi_300;
+            document.getElementById("tc_900").value = tieu_chi_900;
+            document.getElementById("diem_danh_gia_tieu_chi_chung").value = tieu_chi_900;
         }
 
+        function tong_cong() {
+            let tong_cong = parseFloat(document.getElementById("tong_diem_danh_gia").value);
+            let diem_danh_gia_tieu_chi_chung = parseFloat(document.getElementById("diem_danh_gia_tieu_chi_chung").value);
+            let diem_danh_gia_thuc_hien_nhiem_vu = parseFloat(document.getElementById("diem_danh_gia_thuc_hien_nhiem_vu")
+                .value);
+            tong_cong = diem_danh_gia_tieu_chi_chung + diem_danh_gia_thuc_hien_nhiem_vu;
+            document.getElementById("tong_diem_danh_gia").value = tong_cong;
+        }
+
+        // Không được xóa function này
         function tong_() {}
-    </script>
-
-    <script>
-        $(function() {
-            const table = $("#nhiem-vu").DataTable({
-                lengthChange: false,
-                pageLength: 20,
-                searching: false,
-                autoWidth: false,
-                paging: false,
-                ordering: false,
-                info: false,
-                columnDefs: [
-                    // Center align both header and body content of columns 1, 2 & 3
-                    {
-                        className: "dt-center",
-                        targets: [0, 1, 2, 3, 4, 5, 6]
-                    }
-                ],
-            })
-            let ma_tieu_chi = 1;
-
-            //Xóa Dòng
-            table.on('click', 'tbody tr', (e) => {
-                let classList = e.currentTarget.classList;
-
-                table.rows('.selected').nodes().each((row) => row.classList.remove('selected'));
-                classList.add('selected');
-            });
-
-            document.querySelector('#removeRow').addEventListener('click', function() {
-                table.row('.selected').remove().draw(false);
-            });
-
-            //Thêm Dòng
-            function addNewRow() {
-                if (ma_tieu_chi <= 50) {
-                    table.row
-                        .add([
-                            '+',
-                            '<textarea class="form-control" id="' + ma_tieu_chi + '_noi_dung_nhiem_vu" name="' +
-                            ma_tieu_chi + '_noi_dung_nhiem_vu" rows="2"></textarea>',
-                            '<input type="checkbox" name="' + ma_tieu_chi +
-                            '_nhiem_vu_phat_sinh" value="1">',
-                            '<input type="radio" name="' + ma_tieu_chi +
-                            '_hoan_thanh_nhiem_vu" value="truoc_han">',
-                            '<input type="radio" name="' + ma_tieu_chi +
-                            '_hoan_thanh_nhiem_vu" value="dung_han" checked>',
-                            '<input type="radio" name="' + ma_tieu_chi +
-                            '_hoan_thanh_nhiem_vu" value="qua_han">',
-                            '<input type="radio" name="' + ma_tieu_chi +
-                            '_hoan_thanh_nhiem_vu" value="lui_han">',
-                        ])
-                        .draw(false);
-                }
-                ma_tieu_chi++;
-            };
-
-            document.querySelector('#addRow').addEventListener('click', addNewRow);
-
-            // Automatically add a first row of data
-            addNewRow();
-        });
     </script>
 
     {{-- Tự động xếp loại dựa trên Tổng điểm --}}
@@ -616,7 +452,7 @@ if (isset($diem_danh_gia)) {
         tu_xep_loai();
 
         function tu_xep_loai() {
-            let diem_tu_cham = document.querySelector('#tong_cong').innerHTML;
+            let diem_tu_cham = parseFloat(document.getElementById("tong_diem_danh_gia").value);
             let cap_tren_xep_loai = document.getElementsByName("cap_tren_xep_loai");
             for (let i = 0, len = cap_tren_xep_loai.length; i < len; i++) {
                 cap_tren_xep_loai[i].disabled = true;
@@ -637,11 +473,16 @@ if (isset($diem_danh_gia)) {
         }
     </script>
 
-
+    {{-- Kiểm tra dữ liệu đầu vào --}}
     <script>
         $(function() {
-            $('#maudanhgia-captrendanhgia').validate({
+            $('#mauphieudanhgia').validate({
                 rules: {
+                    thang_danh_gia: {
+                        required: true,
+                        min: 1,
+                        max: {{ $thoi_diem_danh_gia->month }},
+                    },
                     @php
                         foreach ($ket_qua_muc_A as $data) {
                             echo '
@@ -659,6 +500,26 @@ if (isset($diem_danh_gia)) {
                     @endphp
                 },
                 messages: {
+                    thang_danh_gia: {
+                        required: "Vui lòng nhập thông tin",
+                        min: "Không nhập số âm",
+                        max: "Chưa đến thời điểm đánh giá",
+                    },
+                    diem_tieu_chi_chung: {
+                        required: "Vui lòng nhập thông tin",
+                        min: "Không nhập số âm",
+                        max: "Lớn hơn điểm tối đa",
+                    },
+                    diem_thuc_hien_nhiem_vu: {
+                        required: "Vui lòng nhập thông tin",
+                        min: "Không nhập số âm",
+                        max: "Lớn hơn điểm tối đa",
+                    },
+                    tong_diem_tu_cham: {
+                        required: "Vui lòng nhập thông tin",
+                        min: "Không nhập số âm",
+                        max: "Lớn hơn điểm tối đa",
+                    },
                     @php
                         foreach ($ket_qua_muc_A as $data) {
                             echo '
@@ -677,7 +538,6 @@ if (isset($diem_danh_gia)) {
                 errorPlacement: function(error, element) {
                     error.addClass('invalid-feedback');
                     element.closest('.align-middle').append(error);
-
                 },
                 highlight: function(element, errorClass, validClass) {
                     $(element).addClass('is-invalid');

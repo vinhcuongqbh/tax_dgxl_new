@@ -268,7 +268,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>                        
+                        </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
@@ -299,12 +299,12 @@
                                 </li>
                                 <!-- <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_chicuctruong_pheduyet" class="nav-link">
-                                        <p>7.5. Danh sách chờ Chi cục trưởng duyệt/phê duyệt</p>
+                                        <p>7.5. Danh sách chờ Trưởng Thuế cơ sở duyệt/phê duyệt</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_cuctruong_pheduyet" class="nav-link">
-                                        <p>7.6. Danh sách chờ Cục trưởng phê duyệt</p>
+                                        <p>7.6. Danh sách chờ Trưởng Thuế  tỉnh phê duyệt</p>
                                     </a>
                                 </li> -->
                             </ul>
@@ -378,9 +378,9 @@
 
         <!-- Main Footer -->
         <footer class="main-footer">
-            <strong>Cục Thuế tỉnh Quảng Bình - 2024</strong>
+            <strong>Thuế tỉnh Quảng Trị - 2026</strong>
             <div class="float-right d-none d-sm-inline-block">
-                <b>Version</b> 1.0.0
+                <b>Version</b> 2.0.0
             </div>
         </footer>
     </div>

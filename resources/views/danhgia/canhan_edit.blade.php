@@ -10,7 +10,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                <form action="{{ route('phieudanhgia.canhan.update', $phieu_danh_gia->ma_phieu_danh_gia) }}" method="post" id="mauphieudanhgia">
+                <form action="{{ route('phieudanhgia.canhan.update', $phieu_danh_gia->ma_phieu_danh_gia) }}" method="post"
+                    id="mauphieudanhgia">
                     @csrf
                     <div class="card card-default">
                         <div class="card-body">
@@ -34,18 +35,19 @@
                             <h6 class="text-center align-middle my-0"><i>(Kỳ theo dõi, đánh giá: Quý
                                     <input type="number" class="text-center" id="quy_danh_gia" name="quy_danh_gia"
                                         min="1" max="{{ ceil($thoi_diem_danh_gia->month / 3) }}"
-                                        value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" readonly> năm <input type="number"
-                                        class="text-center" id="nam_danh_gia" name="nam_danh_gia" min="1"
-                                        max="{{ $thoi_diem_danh_gia->year }}" value="{{ $thoi_diem_danh_gia->year }}"
-                                        readonly>
+                                        value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" readonly> năm <input
+                                        type="number" class="text-center" id="nam_danh_gia" name="nam_danh_gia"
+                                        min="1" max="{{ $thoi_diem_danh_gia->year }}"
+                                        value="{{ $thoi_diem_danh_gia->year }}" readonly>
                                     )
                                 </i></h6>
                             <br>
 
                             {{-- Phần Thông tin cá nhân --}}
-                            <h6>Họ và tên: {{ $user->name }}</h6>                            
-                            <h6>Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>
-                            <h6>Đơn vị công tác: {{ $user->phong->ten_phong }}, {{ $user->don_vi->ten_don_vi }}
+                            <h6>Họ và tên: {{ $phieu_danh_gia->user->name }}</h6>
+                            <h6>Chức vụ, chức danh: {{ $phieu_danh_gia->user->chuc_vu->ten_chuc_vu }}</h6>
+                            <h6>Đơn vị công tác: {{ $phieu_danh_gia->user->phong->ten_phong }},
+                                {{ $phieu_danh_gia->user->don_vi->ten_don_vi }}
                             </h6>
                             <br>
 
@@ -140,8 +142,9 @@
                                         <td>1. Điểm tiêu chí chung:</td>
                                         <td class="align-middle text-center text-bold">
                                             <input type="number" id="diem_tieu_chi_chung" name="diem_tieu_chi_chung"
-                                                value="{{ $phieu_danh_gia->diem_tieu_chi_chung }}" class="text-center form-control pl-4" min="0"
-                                                max="30" step="0.5" readonly>
+                                                value="{{ $phieu_danh_gia->diem_tieu_chi_chung }}"
+                                                class="text-center form-control pl-4" min="0" max="30"
+                                                step="0.5" readonly>
                                         </td>
                                         <td></td>
                                     </tr>
@@ -149,7 +152,8 @@
                                         <td>2. Điểm tiêu chí kết quả thực hiện nhiệm vụ:</td>
                                         <td class="align-middle text-center text-bold">
                                             <input type="number" id="diem_thuc_hien_nhiem_vu"
-                                                name="diem_thuc_hien_nhiem_vu" value="{{ $phieu_danh_gia->diem_thuc_hien_nhiem_vu }}"
+                                                name="diem_thuc_hien_nhiem_vu"
+                                                value="{{ $phieu_danh_gia->diem_thuc_hien_nhiem_vu }}"
                                                 class="text-center form-control pl-4" min="0" max="70"
                                                 step="0.5" onchange="tong_cong(); tu_xep_loai();">
                                         </td>
@@ -159,8 +163,9 @@
                                         <td>3. Tổng điểm theo dõi, đánh giá công chức:</td>
                                         <td class="align-middle text-center text-bold">
                                             <input type="number" id="tong_diem_tu_cham" name="tong_diem_tu_cham"
-                                                value="100" class="text-center form-control pl-4" min="0"
-                                                max="100" step="0.5" readonly>
+                                                value="{{ $phieu_danh_gia->tong_diem_tu_cham }}"
+                                                class="text-center form-control pl-4" min="0" max="100"
+                                                step="0.5" readonly>
                                         </td>
                                         <td></td>
                                     </tr>
@@ -250,20 +255,20 @@
                                 </colgroup>
                                 <tbody>
                                     <tr>
-                                        <td class="py-0"></td>
-                                        <td class="py-0"></td>
                                         <td class="text-center font-italic py-0">Ngày
                                             {{ $ngay_thuc_hien_danh_gia->day }}
                                             tháng
                                             {{ $ngay_thuc_hien_danh_gia->month }} năm
                                             {{ $ngay_thuc_hien_danh_gia->year }}
                                         </td>
+                                        <td class="py-0"></td>
+                                        <td class="text-center font-italic py-0">Ngày ... tháng ... năm ...
                                     </tr>
                                     <tr>
                                         <td class="text-center text-bold py-0">CÔNG CHỨC TỰ ĐÁNH
                                             GIÁ
                                             <br><br><br><br><br>
-                                            {{ $user->name }}
+                                            {{ $phieu_danh_gia->user->name }}
                                         </td>
                                         <td class="py-0"></td>
                                         <td class="text-center text-bold py-0">
