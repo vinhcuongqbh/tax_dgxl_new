@@ -30,22 +30,11 @@ trait PhieuDanhGiaTrait
     // Tìm Kết quả mục A
     public  function timKetQuaMucA($phieu_danh_gia)
     {
-        if ($phieu_danh_gia->mau_phieu_danh_gia == 'mau01A') {
-            $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $phieu_danh_gia->ma_phieu_danh_gia)
-                ->leftjoin('mau01A', 'mau01A.ma_tieu_chi', 'ket_qua_muc_A.ma_tieu_chi')
-                ->select('ket_qua_muc_A.*', 'mau01A.tieu_chi_me', 'mau01A.loai_tieu_chi', 'mau01A.tt', 'mau01A.noi_dung')
-                ->get();
-        } elseif ($phieu_danh_gia->mau_phieu_danh_gia == 'mau01B') {
-            $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $phieu_danh_gia->ma_phieu_danh_gia)
-                ->leftjoin('mau01B', 'mau01B.ma_tieu_chi', 'ket_qua_muc_A.ma_tieu_chi')
-                ->select('ket_qua_muc_A.*', 'mau01B.tieu_chi_me', 'mau01B.loai_tieu_chi', 'mau01B.tt', 'mau01B.noi_dung')
-                ->get();
-        } elseif ($phieu_danh_gia->mau_phieu_danh_gia == 'mau01C') {
-            $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $phieu_danh_gia->ma_phieu_danh_gia)
-                ->leftjoin('mau01C', 'mau01C.ma_tieu_chi', 'ket_qua_muc_A.ma_tieu_chi')
-                ->select('ket_qua_muc_A.*', 'mau01C.tieu_chi_me', 'mau01C.loai_tieu_chi', 'mau01C.tt', 'mau01C.noi_dung')
-                ->get();
-        }
+        $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $phieu_danh_gia->ma_phieu_danh_gia)
+            ->leftjoin('mau01', 'mau01.ma_tieu_chi', 'ket_qua_muc_A.ma_tieu_chi')
+            ->select('ket_qua_muc_A.*', 'mau01.tieu_chi_me', 'mau01.loai_tieu_chi', 'mau01.tt', 'mau01.noi_dung')
+            ->get();
+
         return $ket_qua_muc_A;
     }
 

@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::table('phieu_danh_gia', function (Blueprint $table) {
-        //     $table->dropColumn([
-        //         'diem_tu_cham',
-        //         'diem_cong_tu_cham',
-        //         'diem_tru_tu_cham',
-        //         'tong_diem_tu_cham',
-        //         'diem_danh_gia',
-        //         'diem_cong_danh_gia',
-        //         'diem_tru_danh_gia',
-        //         'tong_diem_danh_gia'
-        //     ]);
-        // });
+        Schema::table('phieu_danh_gia', function (Blueprint $table) {
+            $table->dropColumn([
+                'diem_tu_cham',
+                'diem_cong_tu_cham',
+                'diem_tru_tu_cham',
+                'tong_diem_tu_cham',
+                'diem_danh_gia',
+                'diem_cong_danh_gia',
+                'diem_tru_danh_gia',
+                'tong_diem_danh_gia'
+            ]);
+        });
 
         Schema::table('phieu_danh_gia', function (Blueprint $table) {
             $table->decimal('diem_tieu_chi_chung', 3, 1)->nullable()->after('ma_don_vi');

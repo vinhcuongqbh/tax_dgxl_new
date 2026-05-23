@@ -76,30 +76,26 @@ class PhieuDanhGiaController extends Controller
     // Tạo Phiếu đánh giá cá nhân tự chấm
     public function canhanCreate()
     {
-        if ((Carbon::now()->day > 31) and (!in_array(Auth::user()->ma_chuc_vu, ['01', '02', '02A']))) {
-            return back()->with('msg_error', 'Đã quá thời hạn cá nhân tự đánh giá. Vui lòng liên hệ phòng Tổ chức cán bộ để được hỗ trợ.');
-        } else {
-            $thoi_diem_danh_gia = Carbon::now()->subMonth();
-            $ngay_thuc_hien_danh_gia = Carbon::now();
-            $xep_loai = XepLoai::all();
+        $thoi_diem_danh_gia = Carbon::now()->subMonth();
+        $ngay_thuc_hien_danh_gia = Carbon::now();
+        $xep_loai = XepLoai::all();
 
-            $user = User::where('so_hieu_cong_chuc', Auth::user()->so_hieu_cong_chuc)->first();
+        $user = User::where('so_hieu_cong_chuc', Auth::user()->so_hieu_cong_chuc)->first();
 
-            // Xác định mẫu phiếu và thông tin về mẫu phiếu
-            list($mau_phieu_danh_gia, $thong_tin_mau_phieu) = $this->xacDinhMauPhieu();
+        // Xác định mẫu phiếu và thông tin về mẫu phiếu
+        list($mau_phieu_danh_gia, $thong_tin_mau_phieu) = $this->xacDinhMauPhieu();
 
-            return view(
-                'danhgia.canhan_create',
-                [
-                    'mau_phieu' => $mau_phieu_danh_gia,
-                    'thong_tin_mau_phieu' => $thong_tin_mau_phieu,
-                    'thoi_diem_danh_gia' => $thoi_diem_danh_gia,
-                    'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
-                    'xep_loai' => $xep_loai,
-                    'user' => $user,
-                ]
-            );
-        }
+        return view(
+            'danhgia.canhan_create',
+            [
+                'mau_phieu' => $mau_phieu_danh_gia,
+                'thong_tin_mau_phieu' => $thong_tin_mau_phieu,
+                'thoi_diem_danh_gia' => $thoi_diem_danh_gia,
+                'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
+                'xep_loai' => $xep_loai,
+                'user' => $user,
+            ]
+        );
     }
 
 
@@ -107,7 +103,7 @@ class PhieuDanhGiaController extends Controller
     public function canhanStore(Request $request)
     {
         // Tạo Mã phiếu đánh giá 
-        $thoi_diem_danh_gia = Carbon::createFromDate($request->nam_danh_gia, $request->quy_danh_gia,)->endOfQuarter();
+        $thoi_diem_danh_gia = Carbon::createFromDate($request->nam_danh_gia, ($request->quy_danh_gia) * 3, 1)->endOfMonth();
         $ma_phieu_danh_gia = $thoi_diem_danh_gia->format("Y") . $thoi_diem_danh_gia->format("m") . "_" . Auth::user()->so_hieu_cong_chuc;
 
         // Kiểm tra Mã phiếu đánh giá đã tồn tại
@@ -152,7 +148,6 @@ class PhieuDanhGiaController extends Controller
             $phieu_danh_gia->tong_diem_tu_cham = $tong_diem_tu_cham;
             $phieu_danh_gia->uu_diem = $uu_diem;
             $phieu_danh_gia->khuyet_diem = $khuyet_diem;
-            $phieu_danh_gia->cap_tren_nhan_xet = $cap_tren_nhan_xet;
             $phieu_danh_gia->ca_nhan_tu_xep_loai = $ca_nhan_tu_xep_loai;
             $phieu_danh_gia->ma_trang_thai = 11;
             $phieu_danh_gia->save();
@@ -166,116 +161,6 @@ class PhieuDanhGiaController extends Controller
         }
     }
 
-
-    public function canhanEdit($id)
-    {
-        if ((Carbon::now()->day > 31) and (!in_array(Auth::user()->ma_chuc_vu, ['01', '02', '02A']))) {
-            return back()->with('msg_error', 'Đã quá thời hạn cá nhân tự đánh giá. Vui lòng liên hệ phòng Tổ chức cán bộ để được hỗ trợ.');
-        } else {
-            // Tìm Phiếu đánh giá
-            $phieu_danh_gia = $this->timPhieuDanhGia($id);
-            $thoi_diem_danh_gia = Carbon::create($phieu_danh_gia->thoi_diem_danh_gia);
-
-            // Nếu Mã trạng thái khác 11-Cá nhân tạo Phiếu đánh giá
-            if (($phieu_danh_gia->ma_trang_thai <> 11) || ($phieu_danh_gia->so_hieu_cong_chuc <> Auth::user()->so_hieu_cong_chuc)) {
-                return back()->with('msg_error', "Không được phép sửa Phiếu đánh giá này");
-            }
-
-            // Lấy dữ liệu mục A
-            $ket_qua_muc_A = $this->timKetQuaMucA($phieu_danh_gia);
-            // Lấy dữ liệu mục B
-            $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $id)->get();
-            // Lấy dữ liệu Lý do điểm cộng
-            $ly_do_diem_cong = LyDoDiemCong::where('ma_phieu_danh_gia', $id)->first();
-            // Lấy dữ liệu Lý do điểm trừ
-            $ly_do_diem_tru = LyDoDiemTru::where('ma_phieu_danh_gia', $id)->first();
-
-            // Lấy thông tin Mẫu phiếu đánh giá
-            $thong_tin_mau_phieu = $this->thongTinMauPhieu($phieu_danh_gia->mau_phieu_danh_gia);
-
-            $ngay_thuc_hien_danh_gia = Carbon::create($phieu_danh_gia->created_at);
-            $xep_loai = XepLoai::all();
-
-            return view(
-                'danhgia.canhan_edit',
-                [
-                    'phieu_danh_gia' => $phieu_danh_gia,
-                    'thong_tin_mau_phieu' => $thong_tin_mau_phieu,
-                    'thoi_diem_danh_gia' => $thoi_diem_danh_gia,
-                    'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
-                    'xep_loai' => $xep_loai,
-                    'ket_qua_muc_A' => $ket_qua_muc_A,
-                    'ket_qua_muc_B' => $ket_qua_muc_B,
-                    'ly_do_diem_cong' => $ly_do_diem_cong,
-                    'ly_do_diem_tru' => $ly_do_diem_tru,
-                ]
-            );
-        }
-    }
-
-
-    //Cập nhật Phiếu đánh giá cá nhân tự chấm
-    public function canhanUpdate($ma_phieu_danh_gia, Request $request)
-    {
-        // Tính Tổng điểm cá nhân tự chấm
-        $diem_tieu_chi_chung = $request->diem_tieu_chi_chung;
-        $diem_thuc_hien_nhiem_vu = $request->diem_thuc_hien_nhiem_vu;
-        $tong_diem_tu_cham = $this->tinhTongDiem($request);
-        // Kết quả cá nhân tự xếp loại
-        $ca_nhan_tu_xep_loai = $this->xepLoai($tong_diem_tu_cham);
-
-        // Lưu kết quả tự chấm Mục A        
-        $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
-        foreach ($ket_qua_muc_A as $ket_qua) {
-            $data = $ket_qua_muc_A->where('ma_tieu_chi', $ket_qua->ma_tieu_chi)->first();
-            $data->diem_tu_cham = $request->input($ket_qua->ma_tieu_chi);
-            $data->save();
-        }
-
-        // Lưu kết quả tự chấm Mục B    
-        $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
-        foreach ($ket_qua_muc_B as $ket_qua) {
-            $ket_qua->delete();
-        }
-        for ($i = 1; $i <= 50; $i++) {
-            if ($request->input($i . '_noi_dung_nhiem_vu') != null) {
-                $ket_qua_muc_B = new KetQuaMucB();
-                $ket_qua_muc_B->ma_phieu_danh_gia = $ma_phieu_danh_gia;
-                $ket_qua_muc_B->noi_dung = $request->input($i . '_noi_dung_nhiem_vu');
-                $ket_qua_muc_B->nhiem_vu_phat_sinh = $request->input($i . '_nhiem_vu_phat_sinh');
-                $ket_qua_muc_B->hoan_thanh_nhiem_vu = $request->input($i . '_hoan_thanh_nhiem_vu');
-                $ket_qua_muc_B->save();
-            };
-        }
-
-        // Lưu kết quả Lý do điểm Cộng
-        $ly_do_diem_cong = LyDoDiemCong::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        $ly_do_diem_cong->noi_dung = $request->ly_do_diem_cong;
-        $ly_do_diem_cong->save();
-
-        // Lưu kết quả Lý do điểm trừ
-        $ly_do_diem_tru = LyDoDiemTru::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        $ly_do_diem_tru->noi_dung = $request->ly_do_diem_tru;
-        $ly_do_diem_tru->save();
-
-        // Lưu kết quả Phiếu đánh giá cá nhân tự đánh giá
-        $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        $phieu_danh_gia->diem_tieu_chi_chung = $diem_tieu_chi_chung;
-        $phieu_danh_gia->diem_thuc_hien_nhiem_vu = $diem_thuc_hien_nhiem_vu;
-        $phieu_danh_gia->tong_diem_tu_cham = $tong_diem_tu_cham;
-        $phieu_danh_gia->ca_nhan_tu_xep_loai = $ca_nhan_tu_xep_loai;
-        //if (Auth::user()->ma_chuc_vu == "01") $phieu_danh_gia->ket_qua_xep_loai = $ca_nhan_tu_xep_loai;
-        $phieu_danh_gia->save();
-
-        return redirect()->route(
-            'phieudanhgia.canhan.show',
-            [
-                'id' => $phieu_danh_gia->ma_phieu_danh_gia
-            ]
-        )->with('msg_success', 'Đã cập nhật thành công Phiếu đánh giá. Bạn vui lòng kiểm tra lại kỹ trước khi gửi Phiếu.');
-    }
-
-
     public function canhanShow($ma_phieu_danh_gia)
     {
         //Tìm Phiếu đánh giá
@@ -284,14 +169,9 @@ class PhieuDanhGiaController extends Controller
         //Lấy dữ liệu mục A
         $ket_qua_muc_A = $this->timKetQuaMucA($phieu_danh_gia);
 
-        //Lấy dữ liệu mục B
-        $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
+        // //Lấy dữ liệu mục B
+        // $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
 
-        //Lấy dữ liệu Lý do điểm cộng
-        $ly_do_diem_cong = LyDoDiemCong::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-
-        //Lấy dữ liệu Lý do điểm trừ
-        $ly_do_diem_tru = LyDoDiemTru::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
 
         //Lấy thông tin Mẫu phiếu đánh giá
         $thong_tin_mau_phieu = $this->thongTinMauPhieu($phieu_danh_gia->mau_phieu_danh_gia);
@@ -309,31 +189,122 @@ class PhieuDanhGiaController extends Controller
                 'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
                 'xep_loai' => $xep_loai,
                 'ket_qua_muc_A' => $ket_qua_muc_A,
-                'ket_qua_muc_B' => $ket_qua_muc_B,
-                'ly_do_diem_cong' => $ly_do_diem_cong,
-                'ly_do_diem_tru' => $ly_do_diem_tru,
+                // 'ket_qua_muc_B' => $ket_qua_muc_B,
             ]
         );
     }
 
 
+    public function canhanEdit($id)
+    {
+
+        // Tìm Phiếu đánh giá
+        $phieu_danh_gia = $this->timPhieuDanhGia($id);
+        $thoi_diem_danh_gia = Carbon::create($phieu_danh_gia->thoi_diem_danh_gia);
+
+        // Nếu Mã trạng thái khác 11-Cá nhân tạo Phiếu đánh giá
+        if (($phieu_danh_gia->ma_trang_thai <> 11) || ($phieu_danh_gia->so_hieu_cong_chuc <> Auth::user()->so_hieu_cong_chuc)) {
+            return back()->with('msg_error', "Không được phép sửa Phiếu đánh giá này");
+        }
+
+        // Lấy dữ liệu mục A
+        $ket_qua_muc_A = $this->timKetQuaMucA($phieu_danh_gia);
+        // Lấy dữ liệu mục B
+        // $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $id)->get();
+
+        // Lấy thông tin Mẫu phiếu đánh giá
+        $thong_tin_mau_phieu = $this->thongTinMauPhieu($phieu_danh_gia->mau_phieu_danh_gia);
+
+        $ngay_thuc_hien_danh_gia = Carbon::create($phieu_danh_gia->created_at);
+        $xep_loai = XepLoai::all();
+
+        $user = User::where('so_hieu_cong_chuc', Auth::user()->so_hieu_cong_chuc)->first();
+
+        return view(
+            'danhgia.canhan_edit',
+            [
+                'phieu_danh_gia' => $phieu_danh_gia,
+                'thong_tin_mau_phieu' => $thong_tin_mau_phieu,
+                'thoi_diem_danh_gia' => $thoi_diem_danh_gia,
+                'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
+                'xep_loai' => $xep_loai,
+                'ket_qua_muc_A' => $ket_qua_muc_A,
+                // 'ket_qua_muc_B' => $ket_qua_muc_B,
+                'user' => $user,
+            ]
+        );
+    }
+
+
+    //Cập nhật Phiếu đánh giá cá nhân tự chấm
+    public function canhanUpdate($ma_phieu_danh_gia, Request $request)
+    {
+        // Tính Tổng điểm cá nhân tự chấm
+        $diem_tieu_chi_chung = $request->diem_tieu_chi_chung;
+        $diem_thuc_hien_nhiem_vu = $request->diem_thuc_hien_nhiem_vu;
+        $tong_diem_tu_cham = $this->tinhTongDiem($request);
+        $uu_diem = $request->uu_diem;
+        $khuyet_diem = $request->khuyet_diem;
+        
+        // Kết quả cá nhân tự xếp loại
+        $ca_nhan_tu_xep_loai = $this->xepLoai($tong_diem_tu_cham);
+
+        // Lưu kết quả tự chấm Mục A        
+        $ket_qua_muc_A = KetQuaMucA::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
+        foreach ($ket_qua_muc_A as $ket_qua) {
+            $data = $ket_qua_muc_A->where('ma_tieu_chi', $ket_qua->ma_tieu_chi)->first();
+            $data->diem_tu_cham = $request->input($ket_qua->ma_tieu_chi);
+            $data->save();
+        }
+
+        // // Lưu kết quả tự chấm Mục B    
+        // $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
+        // foreach ($ket_qua_muc_B as $ket_qua) {
+        //     $ket_qua->delete();
+        // }
+        // for ($i = 1; $i <= 50; $i++) {
+        //     if ($request->input($i . '_noi_dung_nhiem_vu') != null) {
+        //         $ket_qua_muc_B = new KetQuaMucB();
+        //         $ket_qua_muc_B->ma_phieu_danh_gia = $ma_phieu_danh_gia;
+        //         $ket_qua_muc_B->noi_dung = $request->input($i . '_noi_dung_nhiem_vu');
+        //         $ket_qua_muc_B->nhiem_vu_phat_sinh = $request->input($i . '_nhiem_vu_phat_sinh');
+        //         $ket_qua_muc_B->hoan_thanh_nhiem_vu = $request->input($i . '_hoan_thanh_nhiem_vu');
+        //         $ket_qua_muc_B->save();
+        //     };
+        // }      
+
+        // Lưu kết quả Phiếu đánh giá cá nhân tự đánh giá
+        $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
+        $phieu_danh_gia->diem_tieu_chi_chung = $diem_tieu_chi_chung;
+        $phieu_danh_gia->diem_thuc_hien_nhiem_vu = $diem_thuc_hien_nhiem_vu;
+        $phieu_danh_gia->tong_diem_tu_cham = $tong_diem_tu_cham;
+        $phieu_danh_gia->uu_diem = $uu_diem;
+        $phieu_danh_gia->khuyet_diem = $khuyet_diem;
+        $phieu_danh_gia->ca_nhan_tu_xep_loai = $ca_nhan_tu_xep_loai;
+        $phieu_danh_gia->save();
+
+        return redirect()->route(
+            'phieudanhgia.canhan.show',
+            [
+                'id' => $phieu_danh_gia->ma_phieu_danh_gia
+            ]
+        )->with('msg_success', 'Đã cập nhật thành công Phiếu đánh giá. Bạn vui lòng kiểm tra lại kỹ trước khi gửi Phiếu.');
+    }
+
+
     public function canhanSend($ma_phieu_danh_gia)
     {
-        if ((Carbon::now()->day > 31) and (!in_array(Auth::user()->ma_chuc_vu, ['01', '02', '02A']))) {
-            return back()->with('msg_error', 'Đã quá thời hạn cá nhân tự đánh giá. Vui lòng liên hệ phòng Tổ chức cán bộ để được hỗ trợ.');
-        } else {
-            $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)
-                ->first();
+        $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)
+            ->first();
 
-            if ($phieu_danh_gia->ma_chuc_vu == '01') $phieu_danh_gia->ma_trang_thai = 17;
-            else $phieu_danh_gia->ma_trang_thai = 13;
-            $phieu_danh_gia->save();
+        if ($phieu_danh_gia->ma_chuc_vu == '01') $phieu_danh_gia->ma_trang_thai = 17;
+        else $phieu_danh_gia->ma_trang_thai = 13;
+        $phieu_danh_gia->save();
 
-            return redirect()->route(
-                'phieudanhgia.canhan.show',
-                ['id' => $ma_phieu_danh_gia]
-            )->with('msg_success', 'Đã gửi Phiếu đánh giá thành công');
-        }
+        return redirect()->route(
+            'phieudanhgia.canhan.show',
+            ['id' => $ma_phieu_danh_gia]
+        )->with('msg_success', 'Đã gửi Phiếu đánh giá thành công');
     }
 
 
@@ -472,11 +443,7 @@ class PhieuDanhGiaController extends Controller
         //Lấy dữ liệu mục A
         $ket_qua_muc_A = $this->timKetQuaMucA($phieu_danh_gia);
         //Lấy dữ liệu mục B
-        $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();
-        //Lấy dữ liệu Lý do điểm cộng
-        $ly_do_diem_cong = LyDoDiemCong::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        //Lấy dữ liệu Lý do điểm trừ
-        $ly_do_diem_tru = LyDoDiemTru::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
+        // $ket_qua_muc_B = KetQuaMucB::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->get();        
 
         //Lấy thông tin Mẫu phiếu đánh giá
         $thong_tin_mau_phieu = $this->thongTinMauPhieu($phieu_danh_gia->mau_phieu_danh_gia);
@@ -493,9 +460,7 @@ class PhieuDanhGiaController extends Controller
                 'ngay_thuc_hien_danh_gia' => $ngay_thuc_hien_danh_gia,
                 'xep_loai' => $xep_loai,
                 'ket_qua_muc_A' => $ket_qua_muc_A,
-                'ket_qua_muc_B' => $ket_qua_muc_B,
-                'ly_do_diem_cong' => $ly_do_diem_cong,
-                'ly_do_diem_tru' => $ly_do_diem_tru,
+                // 'ket_qua_muc_B' => $ket_qua_muc_B,
             ]
         );
     }
@@ -1961,16 +1926,10 @@ class PhieuDanhGiaController extends Controller
     public function thongTinMauPhieu($mau_phieu_danh_gia)
     {
         $thong_tin_mau_phieu = collect();
-        if ($mau_phieu_danh_gia == "mau01A") {
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu 01A";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "công chức giữ chức vụ lãnh đạo, quản lý";
-        } elseif ($mau_phieu_danh_gia == "mau01B") {
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu 01B";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "công chức không giữ chức vụ lãnh đạo, quản lý";
-        } elseif ($mau_phieu_danh_gia == "mau01C") {
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu 01C";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "người lao động";
-        }
+
+        $thong_tin_mau_phieu['ten_mau'] = "Mẫu 01";
+        $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "";
+
         return $thong_tin_mau_phieu;
     }
 

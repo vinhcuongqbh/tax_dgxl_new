@@ -44,9 +44,7 @@
 
                             {{-- Phần Thông tin cá nhân --}}
                             <h6>Họ và tên: {{ $user->name }}</h6>
-                            @if ($thong_tin_mau_phieu['mau'] == 'mau01A')
-                                <h6>Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>
-                            @endif
+                            <h6>Chức vụ, chức danh: {{ $user->chuc_vu->ten_chuc_vu }}</h6>                           
                             <h6>Đơn vị công tác: {{ $user->phong->ten_phong }}, {{ $user->don_vi->ten_don_vi }}
                             </h6>
                             <br>
@@ -214,8 +212,8 @@
                                                 id="hoan_thanh_tot" class="form-control">
                                             <b>Hoàn thành tốt <br>nhiệm vụ</b><br>(Từ
                                             {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
-                                            điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu - 1 }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'A')->first()->diem_toi_thieu }}
                                             điểm)
                                         </td>
                                         <td></td>
@@ -225,8 +223,8 @@
                                                 id="hoan_thanh" class="form-control">
                                             <b>Hoàn thành <br>nhiệm vụ<br></b>(Từ
                                             {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
-                                            điểm đến
-                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu - 1 }}
+                                            điểm đến dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'B')->first()->diem_toi_thieu }}
                                             điểm)
                                         </td>
                                         <td></td>
@@ -234,8 +232,8 @@
                                         <td class="text-center">
                                             <input type="radio" name="ca_nhan_tu_xep_loai" value="D"
                                                 id="khong_hoan_thanh" class="form-control">
-                                            <b>Không hoàn thành <br>nhiệm vụ</b><br>(Từ
-                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu - 1 }}
+                                            <b>Không hoàn thành <br>nhiệm vụ</b><br>(Dưới
+                                            {{ $xep_loai->where('ma_xep_loai', 'C')->first()->diem_toi_thieu }}
                                             điểm trở xuống)
                                         </td>
                                     </tr>

@@ -154,11 +154,11 @@
                                         <p>2.2. Cấp trên đánh giá</p>
                                     </a>
                                 </li>
-                                <li class="nav-item pl-3">
+                                <!-- <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/capqdList" class="nav-link">
                                         <p>2.3. Cấp có thẩm quyền phê duyệt</p>
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/thongbaothang" class="nav-link">
                                         <p>2.4. Thông báo KQ xếp loại</p>
@@ -268,32 +268,7 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="fas fa-chart-bar"></i>
-                                <p>6. Đánh giá xếp loại Cục trưởng</p>
-                                <i class="right fas fa-angle-left"></i>
-
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item pl-3">
-                                    <a href="/cuctruong/hoidongList" class="nav-link">
-                                        <p>6.1. Hội đồng đánh giá</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item pl-3">
-                                    <a href="/cuctruong/tonghopdukienthang" class="nav-link">
-                                        <p>6.2. Tổng hợp kết quả đánh giá tháng</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item pl-3">
-                                    <a href="/cuctruong/tonghopdukienquy" class="nav-link">
-                                        <p>6.3. Tổng hợp kết quả đánh giá quý</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        </li>                        
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
@@ -322,7 +297,7 @@
                                         <p>7.4. Danh sách chờ cấp trên đánh giá</p>
                                     </a>
                                 </li>
-                                <li class="nav-item pl-3">
+                                <!-- <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_chicuctruong_pheduyet" class="nav-link">
                                         <p>7.5. Danh sách chờ Chi cục trưởng duyệt/phê duyệt</p>
                                     </a>
@@ -331,7 +306,7 @@
                                     <a href="/baocao/chitiet/ds_cuctruong_pheduyet" class="nav-link">
                                         <p>7.6. Danh sách chờ Cục trưởng phê duyệt</p>
                                     </a>
-                                </li>
+                                </li> -->
                             </ul>
                         </li>
                         <li class="nav-item">
