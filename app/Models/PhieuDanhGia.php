@@ -9,7 +9,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class PhieuDanhGia extends Model
 {
     use HasFactory;
+
     protected $table = 'phieu_danh_gia';
+
+    protected $casts = [
+        'diem_tieu_chi_chung' => 'decimal:1',
+        'diem_thuc_hien_nhiem_vu' => 'decimal:1',
+        'tong_diem_tu_cham' => 'decimal:1',
+        'diem_danh_gia_tieu_chi_chung' => 'decimal:1',
+        'diem_danh_gia_thuc_hien_nhiem_vu' => 'decimal:1',
+        'tong_diem_danh_gia' => 'decimal:1',
+    ];
 
     public function user(): BelongsTo
     {
@@ -35,5 +45,4 @@ class PhieuDanhGia extends Model
     {
         return $this->BelongsTo(LyDoKhongTuDanhGia::class, 'ly_do_khong_tu_danh_gia', 'id')->withDefault();
     }
-
 }

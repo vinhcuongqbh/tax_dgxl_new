@@ -33,7 +33,6 @@ class UserSeeder extends Seeder
             'name' => 'Super Admin',
             'ngay_sinh' => '9999-12-31',
             'ma_gioi_tinh' => 0,
-            'ma_ngach' => '',
             'ma_chuc_vu' => '',
             'ma_phong' => '',
             'ma_don_vi' => '',
@@ -44,7 +43,7 @@ class UserSeeder extends Seeder
 
         // Gán quyền cho user Super Admin
         $user = User::where('so_hieu_cong_chuc', 'sadmin')->first();
-        $superAdminRole = Role::where('name' , 'Super Admin')->first();
+        $superAdminRole = Role::where('name', 'Super Admin')->first();
         $allPermissionNames = Permission::pluck('name')->toArray();
         $superAdminRole->givePermissionTo($allPermissionNames);
         $user->assignRole($superAdminRole);

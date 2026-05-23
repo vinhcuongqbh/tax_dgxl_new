@@ -6,13 +6,10 @@ use App\Models\DonVi;
 use App\Models\KetQuaMucA;
 use App\Models\KetQuaMucACucTruong;
 use App\Models\KetQuaMucB;
-use App\Models\KQXLNam;
 use App\Models\KQXLQuy;
 use App\Models\LyDoDiemCong;
 use App\Models\LyDoDiemTru;
-use App\Models\Mau01A;
-use App\Models\Mau01B;
-use App\Models\Mau01C;
+use App\Models\Mau01;
 use App\Models\PhieuDanhGia;
 use App\Models\User;
 use App\Models\XepLoai;
@@ -110,18 +107,20 @@ class PhieuDanhGiaController extends Controller
     public function canhanStore(Request $request)
     {
         // Tạo Mã phiếu đánh giá 
-        $thoi_diem_danh_gia = Carbon::createFromDate($request->nam_danh_gia, $request->thang_danh_gia,)->endOfMonth();
+        $thoi_diem_danh_gia = Carbon::createFromDate($request->nam_danh_gia, $request->quy_danh_gia,)->endOfQuarter();
         $ma_phieu_danh_gia = $thoi_diem_danh_gia->format("Y") . $thoi_diem_danh_gia->format("m") . "_" . Auth::user()->so_hieu_cong_chuc;
 
         // Kiểm tra Mã phiếu đánh giá đã tồn tại
         if (PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->exists()) {
-            return back()->with('msg_error', 'Đã tồn tại kết quả đánh giá của tháng này');
+            return back()->with('msg_error', 'Đã tồn tại kết quả đánh giá của quý này');
         } else {
             // Tính Tổng điểm cá nhân tự chấm
-            $diem_tu_cham = $request->tc_300;
-            $diem_cong_tu_cham = $request->tc_400;
-            $diem_tru_tu_cham = $request->tc_500;
-            $tong_diem_tu_cham = $this->tinhTongDiem($request);
+            $diem_tieu_chi_chung = $request->diem_tieu_chi_chung;
+            $diem_thuc_hien_nhiem_vu = $request->diem_thuc_hien_nhiem_vu;
+            $tong_diem_tu_cham = $diem_tieu_chi_chung + $diem_thuc_hien_nhiem_vu;
+            $uu_diem = $request->uu_diem;
+            $khuyet_diem = $request->khuyet_diem;
+            $cap_tren_nhan_xet = $request->cap_tren_nhan_xet;
             // Kết quả cá nhân tự xếp loại
             $ca_nhan_tu_xep_loai = $this->xepLoai($tong_diem_tu_cham);
             // Xác định mẫu phiếu và thông tin về mẫu phiếu
@@ -132,18 +131,12 @@ class PhieuDanhGiaController extends Controller
                 $this->ketQuaMucAStore($ma_phieu_danh_gia, $mau_phieu_danh_gia, $request);
             }
 
-            // Lưu kết quả tự chấm Mục B    
-            for ($i = 1; $i <= 50; $i++) {
-                if ($request->input($i . '_noi_dung_nhiem_vu') != null) {
-                    $this->ketQuaMucBStore($ma_phieu_danh_gia, $request, $i);
-                };
-            }
-
-            // Lưu kết quả Lý do điểm Cộng
-            $this->lyDoDiemCongStore($ma_phieu_danh_gia, $request);
-
-            // Lưu kết quả Lý do điểm trừ
-            $this->lyDoDiemTruStore($ma_phieu_danh_gia, $request);
+            // // Lưu kết quả tự chấm Mục B    
+            // for ($i = 1; $i <= 50; $i++) {
+            //     if ($request->input($i . '_noi_dung_nhiem_vu') != null) {
+            //         $this->ketQuaMucBStore($ma_phieu_danh_gia, $request, $i);
+            //     };
+            // }
 
             // Lưu kết quả Phiếu đánh giá cá nhân tự đánh giá
             $phieu_danh_gia = new PhieuDanhGia();
@@ -154,21 +147,22 @@ class PhieuDanhGiaController extends Controller
             $phieu_danh_gia->ma_chuc_vu = Auth::user()->ma_chuc_vu;
             $phieu_danh_gia->ma_phong = Auth::user()->ma_phong;
             $phieu_danh_gia->ma_don_vi = Auth::user()->ma_don_vi;
-            $phieu_danh_gia->diem_tu_cham = $diem_tu_cham;
-            $phieu_danh_gia->diem_cong_tu_cham = $diem_cong_tu_cham;
-            $phieu_danh_gia->diem_tru_tu_cham = $diem_tru_tu_cham;
+            $phieu_danh_gia->diem_tieu_chi_chung = $diem_tieu_chi_chung;
+            $phieu_danh_gia->diem_thuc_hien_nhiem_vu = $diem_thuc_hien_nhiem_vu;
             $phieu_danh_gia->tong_diem_tu_cham = $tong_diem_tu_cham;
+            $phieu_danh_gia->uu_diem = $uu_diem;
+            $phieu_danh_gia->khuyet_diem = $khuyet_diem;
+            $phieu_danh_gia->cap_tren_nhan_xet = $cap_tren_nhan_xet;
             $phieu_danh_gia->ca_nhan_tu_xep_loai = $ca_nhan_tu_xep_loai;
             $phieu_danh_gia->ma_trang_thai = 11;
-            //if (Auth::user()->ma_chuc_vu == "01") $phieu_danh_gia->ket_qua_xep_loai = $ca_nhan_tu_xep_loai;
             $phieu_danh_gia->save();
 
-            return redirect()->route(
-                'phieudanhgia.canhan.show',
-                [
-                    'id' => $phieu_danh_gia->ma_phieu_danh_gia
-                ]
-            )->with('msg_success', 'Đã lưu thành công Phiếu đánh giá. Bạn vui lòng kiểm tra lại kỹ trước khi gửi Phiếu.');
+            // return redirect()->route(
+            //     'phieudanhgia.canhan.show',
+            //     [
+            //         'id' => $phieu_danh_gia->ma_phieu_danh_gia
+            //     ]
+            // )->with('msg_success', 'Đã lưu thành công Phiếu đánh giá. Bạn vui lòng kiểm tra lại kỹ trước khi gửi Phiếu.');
         }
     }
 
@@ -224,9 +218,8 @@ class PhieuDanhGiaController extends Controller
     public function canhanUpdate($ma_phieu_danh_gia, Request $request)
     {
         // Tính Tổng điểm cá nhân tự chấm
-        $diem_tu_cham = $request->tc_300;
-        $diem_cong_tu_cham = $request->tc_400;
-        $diem_tru_tu_cham = $request->tc_500;
+        $diem_tieu_chi_chung = $request->diem_tieu_chi_chung;
+        $diem_thuc_hien_nhiem_vu = $request->diem_thuc_hien_nhiem_vu;
         $tong_diem_tu_cham = $this->tinhTongDiem($request);
         // Kết quả cá nhân tự xếp loại
         $ca_nhan_tu_xep_loai = $this->xepLoai($tong_diem_tu_cham);
@@ -267,9 +260,8 @@ class PhieuDanhGiaController extends Controller
 
         // Lưu kết quả Phiếu đánh giá cá nhân tự đánh giá
         $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        $phieu_danh_gia->diem_tu_cham = $diem_tu_cham;
-        $phieu_danh_gia->diem_cong_tu_cham = $diem_cong_tu_cham;
-        $phieu_danh_gia->diem_tru_tu_cham = $diem_tru_tu_cham;
+        $phieu_danh_gia->diem_tieu_chi_chung = $diem_tieu_chi_chung;
+        $phieu_danh_gia->diem_thuc_hien_nhiem_vu = $diem_thuc_hien_nhiem_vu;
         $phieu_danh_gia->tong_diem_tu_cham = $tong_diem_tu_cham;
         $phieu_danh_gia->ca_nhan_tu_xep_loai = $ca_nhan_tu_xep_loai;
         //if (Auth::user()->ma_chuc_vu == "01") $phieu_danh_gia->ket_qua_xep_loai = $ca_nhan_tu_xep_loai;
@@ -443,9 +435,8 @@ class PhieuDanhGiaController extends Controller
     public function captrenStore($ma_phieu_danh_gia, Request $request)
     {
         // Tính Tổng điểm cấp trên đánh giá
-        $diem_danh_gia = $request->tc_300;
-        $diem_cong_danh_gia = $request->tc_400;
-        $diem_tru_danh_gia = $request->tc_500;
+        $diem_danh_gia_tieu_chi_chung = $request->tc_300;
+        $diem_danh_gia_thuc_hien_nhiem_vu = $request->tc_400 - $request->tc_500;
         $tong_diem_danh_gia = $this->tinhTongDiem($request);
 
         // Kết quả cấp trên xếp loại
@@ -461,9 +452,8 @@ class PhieuDanhGiaController extends Controller
 
         // Lưu kết quả Phiếu đánh giá cấp trên đánh giá     
         $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
-        $phieu_danh_gia->diem_danh_gia = $diem_danh_gia;
-        $phieu_danh_gia->diem_cong_danh_gia = $diem_cong_danh_gia;
-        $phieu_danh_gia->diem_tru_danh_gia = $diem_tru_danh_gia;
+        $phieu_danh_gia->diem_danh_gia_tieu_chi_chung = $diem_danh_gia_tieu_chi_chung;
+        $phieu_danh_gia->diem_danh_gia_thuc_hien_nhiem_vu = $diem_danh_gia_thuc_hien_nhiem_vu;
         $phieu_danh_gia->tong_diem_danh_gia = $tong_diem_danh_gia;
         $phieu_danh_gia->ket_qua_xep_loai = $ket_qua_xep_loai;
         $phieu_danh_gia->ma_cap_tren_danh_gia = Auth::user()->so_hieu_cong_chuc;
@@ -1296,7 +1286,7 @@ class PhieuDanhGiaController extends Controller
             'don_vi' => $ds_don_vi,
             'ma_don_vi_da_chon' => $request->ma_don_vi_da_chon
         ]);
-    }    
+    }
 
 
     public function hoiDongList(Request $request)
@@ -1392,9 +1382,10 @@ class PhieuDanhGiaController extends Controller
     public function hoiDongStore($ma_phieu_danh_gia, Request $request)
     {
         // Tính Tổng điểm thành viên Hội đồng đánh giá
-        $diem_danh_gia = $request->tc_300;
+        $diem_danh_gia_tieu_chi_chung = $request->tc_300;
         $diem_cong_danh_gia = $request->tc_400;
         $diem_tru_danh_gia = $request->tc_500;
+        $diem_danh_gia_thuc_hien_nhiem_vu = $diem_cong_danh_gia - $diem_tru_danh_gia;
         $tong_diem_danh_gia = $this->tinhTongDiem($request);
 
         // Kết quả thành viên Hội đồng xếp loại
@@ -1443,11 +1434,11 @@ class PhieuDanhGiaController extends Controller
             $phieu_danh_gia->ma_chuc_vu_cap_tren = Auth::user()->ma_chuc_vu;
             $phieu_danh_gia->ma_phong_cap_tren = Auth::user()->ma_phong;
             $phieu_danh_gia->ma_don_vi_cap_tren = Auth::user()->ma_don_vi;
-            $phieu_danh_gia->diem_tu_cham = $phieu->diem_tu_cham;
-            $phieu_danh_gia->diem_cong_tu_cham = $phieu->diem_cong_tu_cham;
-            $phieu_danh_gia->diem_tru_tu_cham = $phieu->diem_tru_tu_cham;
+            $phieu_danh_gia->diem_tu_cham = $phieu->diem_tieu_chi_chung;
+            $phieu_danh_gia->diem_cong_tu_cham = $phieu->diem_thuc_hien_nhiem_vu;
+            $phieu_danh_gia->diem_tru_tu_cham = 0;
             $phieu_danh_gia->tong_diem_tu_cham = $phieu->tong_diem_tu_cham;
-            $phieu_danh_gia->diem_danh_gia = $diem_danh_gia;
+            $phieu_danh_gia->diem_danh_gia = $diem_danh_gia_tieu_chi_chung;
             $phieu_danh_gia->diem_cong_danh_gia = $diem_cong_danh_gia;
             $phieu_danh_gia->diem_tru_danh_gia = $diem_tru_danh_gia;
             $phieu_danh_gia->tong_diem_danh_gia = $tong_diem_danh_gia;
@@ -1825,7 +1816,7 @@ class PhieuDanhGiaController extends Controller
 
     public function phieuKTDGCreate()
     {
-        $don_vi = DonVi::where('ma_trang_thai', 1)->where('ma_don_vi','<>','4400')->get();
+        $don_vi = DonVi::where('ma_trang_thai', 1)->where('ma_don_vi', '<>', '4400')->get();
         return view(
             'danhgia.phieuKTDG_create',
             [
@@ -1958,23 +1949,10 @@ class PhieuDanhGiaController extends Controller
     public function xacDinhMauPhieu()
     {
         $thong_tin_mau_phieu = collect();
-        if (in_array(Auth::user()->ma_ngach, ['01.007', '01.009', '01.010', '01.011'])) {
-            $mau_phieu_danh_gia = Mau01C::all();
-            $thong_tin_mau_phieu['mau'] = "mau01C";
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu số 01C";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "người lao động";
-        } elseif (Auth::user()->ma_chuc_vu != NULL) {
-            $mau_phieu_danh_gia = Mau01A::all();
-            $thong_tin_mau_phieu['mau'] = "mau01A";
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu số 01A";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "công chức giữ chức vụ lãnh đạo, quản lý";
-        } elseif (Auth::user()->ma_chuc_vu == NULL) {
-            $mau_phieu_danh_gia = Mau01B::all();
-            $thong_tin_mau_phieu['mau'] = "mau01B";
-            $thong_tin_mau_phieu['ten_mau'] = "Mẫu số 01B";
-            $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "công chức không giữ chức vụ lãnh đạo, quản lý";
-        }
-
+        $mau_phieu_danh_gia = Mau01::all();
+        $thong_tin_mau_phieu['mau'] = "mau01";
+        $thong_tin_mau_phieu['ten_mau'] = "Mẫu số 01";
+        $thong_tin_mau_phieu['doi_tuong_ap_dung'] = "";
         return [$mau_phieu_danh_gia, $thong_tin_mau_phieu];
     }
 
@@ -2000,19 +1978,10 @@ class PhieuDanhGiaController extends Controller
     // Tính Tổng điểm
     public function tinhTongDiem($request)
     {
-        $tc_110 = $request->tc_111 + $request->tc_112 + $request->tc_113 + $request->tc_114;
-        $tc_130 = $request->tc_131 + $request->tc_132 + $request->tc_133 + $request->tc_134;
-        $tc_150 = $request->tc_151 + $request->tc_152 + $request->tc_153 + $request->tc_154;
-        $tc_170 = $request->tc_171 + $request->tc_172 + $request->tc_173;
-        $tc_100 = $tc_110 + $tc_130 + $tc_150 + $tc_170;
-        $tc_210 = $request->tc_211 + $request->tc_212 + $request->tc_213 + $request->tc_214 + $request->tc_215
-            + $request->tc_216 + $request->tc_217 + $request->tc_218 + $request->tc_219 + $request->tc_220;
-        $tc_230 =  $request->tc_230;
-        $tc_200 = $tc_210 + $tc_230;
-        $tc_300 = $tc_100 + $tc_200;
-        $tc_400 = $request->tc_400;
-        $tc_500 = $request->tc_500;
-        $tong_diem_tu_cham = $tc_300 + $tc_400 - $tc_500;
+        $tc_100 = $request->tc_101 + $request->tc_102;
+        $tc_200 = $request->tc_201 + $request->tc_202 + $request->tc_203 + $request->tc_204;
+        $tc_300 = $request->tc_301 + $request->tc_302 + $request->tc_303 + $request->tc_304;
+        $tong_diem_tu_cham = $tc_100 + $tc_200 + $tc_300;
         return $tong_diem_tu_cham;
     }
 

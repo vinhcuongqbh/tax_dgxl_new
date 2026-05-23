@@ -49,7 +49,7 @@ trait PhieuDanhGiaTrait
         return $ket_qua_muc_A;
     }
 
-   
+
     // Lưu kết quả mục A
     public function ketQuaMucAStore($ma_phieu_danh_gia, $mau_phieu_danh_gia, $request)
     {
@@ -61,34 +61,16 @@ trait PhieuDanhGiaTrait
         $ket_qua_muc_A->save();
     }
 
-    // Lưu kết quả mục B
-    public function ketQuaMucBStore($ma_phieu_danh_gia, $request, $i)
-    {
-        $ket_qua_muc_B = new KetQuaMucB();
-        $ket_qua_muc_B->ma_phieu_danh_gia = $ma_phieu_danh_gia;
-        $ket_qua_muc_B->noi_dung = $request->input($i . '_noi_dung_nhiem_vu');
-        $ket_qua_muc_B->nhiem_vu_phat_sinh = $request->input($i . '_nhiem_vu_phat_sinh');
-        $ket_qua_muc_B->hoan_thanh_nhiem_vu = $request->input($i . '_hoan_thanh_nhiem_vu');
-        $ket_qua_muc_B->save();
-    }
-
-    // Lưu lý do điểm cộng
-    public function lyDoDiemCongStore($ma_phieu_danh_gia, $request)
-    {
-        $ly_do_diem_cong = new LyDoDiemCong();
-        $ly_do_diem_cong->ma_phieu_danh_gia = $ma_phieu_danh_gia;
-        $ly_do_diem_cong->noi_dung = $request->ly_do_diem_cong;
-        $ly_do_diem_cong->save();
-    }
-
-    // Lưu lý do điểm trừ
-    public function lyDoDiemTruStore($ma_phieu_danh_gia, $request)
-    {
-        $ly_do_diem_tru = new LyDoDiemTru();
-        $ly_do_diem_tru->ma_phieu_danh_gia = $ma_phieu_danh_gia;
-        $ly_do_diem_tru->noi_dung = $request->ly_do_diem_tru;
-        $ly_do_diem_tru->save();
-    }
+    // // Lưu kết quả mục B
+    // public function ketQuaMucBStore($ma_phieu_danh_gia, $request, $i)
+    // {
+    //     $ket_qua_muc_B = new KetQuaMucB();
+    //     $ket_qua_muc_B->ma_phieu_danh_gia = $ma_phieu_danh_gia;
+    //     $ket_qua_muc_B->noi_dung = $request->input($i . '_noi_dung_nhiem_vu');
+    //     $ket_qua_muc_B->nhiem_vu_phat_sinh = $request->input($i . '_nhiem_vu_phat_sinh');
+    //     $ket_qua_muc_B->hoan_thanh_nhiem_vu = $request->input($i . '_hoan_thanh_nhiem_vu');
+    //     $ket_qua_muc_B->save();
+    // }
 
     // Phê duyệt danh sách tháng
     public function kQXLThang($danh_sach_phe_duyet)
