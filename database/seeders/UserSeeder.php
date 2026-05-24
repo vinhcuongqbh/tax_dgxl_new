@@ -23,8 +23,13 @@ class UserSeeder extends Seeder
         $danh_sach = User::where('ma_trang_thai', 1)->get();
         foreach ($danh_sach as $ds) {
             $ds->assignRole('Cấp tự đánh giá');
-            if (in_array($ds->ma_chuc_vu, ['01', '03', '04', '05', '09'])) $ds->assignRole('Cấp đánh giá');
-            if (in_array($ds->ma_chuc_vu, ['01', '03'])) $ds->assignRole('Cấp phê duyệt');
+            if (in_array($ds->ma_chuc_vu, array_merge(
+                config('danhgia.nhom_ld.1'),
+                config('danhgia.nhom_ld.2'),
+                config('danhgia.nhom_ld.3')
+            ))) {
+                $ds->assignRole('Cấp đánh giá');
+            }
         }
 
         // Tạo user Super Admin

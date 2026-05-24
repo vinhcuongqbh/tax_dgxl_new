@@ -17,9 +17,9 @@
                             {{ $ds_don_vi->ten_don_vi }}</option>
                     @endforeach
                 </select>
-                <label for="thang_danh_gia" class="h6 mt-2 mx-2">Tháng: </label>
-                <input id="thang_danh_gia" name="thang_danh_gia" type="number" min="1" max="12"
-                    value="{{ $thoi_diem_danh_gia->month }}" class="form-control text-center col-1"><label
+                <label for="quy_danh_gia" class="h6 mt-2 mx-2">Quý: </label>
+                <input id="quy_danh_gia" name="quy_danh_gia" type="number" min="1" max="4"
+                    value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" class="form-control text-center col-1"><label
                     class="h6 mt-2 mx-2">/</label><input type="number" name="nam_danh_gia"
                     value="{{ $thoi_diem_danh_gia->year }}" class="form-control text-center col-1">
                 <label for="thang_danh_gia" class="h6 mt-2 mx-2 col-auto">Xếp loại: </label>

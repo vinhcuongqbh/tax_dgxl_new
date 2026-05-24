@@ -139,7 +139,7 @@
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
                                 <p>
-                                    2. Đánh giá, xếp loại cá nhân hàng tháng
+                                    2. Đánh giá cá nhân hàng quý
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -150,25 +150,30 @@
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
+                                    <a href="#" class="nav-link">
+                                        <p>2.2. Kiểm tra Phiếu đánh giá</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/captrenList" class="nav-link">
-                                        <p>2.2. Cấp trên đánh giá</p>
+                                        <p>2.3. Cấp trên đánh giá</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/capqdList" class="nav-link">
-                                        <p>2.3. Cấp tổng hợp</p>
+                                        <p>2.4. Tổng hợp kết quả</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/thongbaothang" class="nav-link">
-                                        <p>2.4. Thông báo KQ xếp loại</p>
+                                        <p>2.5. Thông báo KQ xếp loại</p>
                                     </a>
                                 </li>
-                                <li class="nav-item pl-3">
+                                {{-- <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/baocaothang" class="nav-link">
                                         <p>2.5. Báo cáo theo tháng</p>
                                     </a>
-                                </li>
+                                </li> --}}
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/tracuu" class="nav-link">
                                         <p>2.6. Tra cứu phiếu đánh giá</p>
@@ -176,7 +181,7 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
                                 <p>
@@ -201,49 +206,49 @@
                                     </a>
                                 </li>
                             </ul>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a href="/dangxaydung" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
                                 <p>
-                                    4. Đánh giá, xếp loại theo năm
+                                    3. Đánh giá, xếp loại theo năm
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item pl-3">
                                     <a href="/tapthe/nhapketqua" class="nav-link">
-                                        <p>4.1. Nhập kết quả xếp loại của tập thể</p>
+                                        <p>3.1. Nhập kết quả xếp loại của tập thể</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/tapthe/tracuuketqua" class="nav-link">
-                                        <p>4.2. Tra cứu kết quả của tập thể</p>
+                                        <p>3.2. Tra cứu kết quả của tập thể</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/canhan/dukienkqxlnam" class="nav-link">
-                                        <p>4.3. Dự kiến xếp loại năm của cá nhân</p>
+                                        <p>3.3. Dự kiến xếp loại năm của cá nhân</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/canhan/nhapketqua" class="nav-link">
-                                        <p>4.4. Nhập kết quả xếp loại năm của cá nhân</p>
+                                        <p>3.4. Nhập kết quả xếp loại năm của cá nhân</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/canhan/nhapbanTuDGXLcanhan" class="nav-link">
-                                        <p>4.5. Nhập bản tự đánh giá xếp loại năm của cá nhân</p>
+                                        <p>3.5. Nhập bản tự đánh giá xếp loại năm của cá nhân</p>
                                     </a>
                                 </li>
                                 {{-- <li class="nav-item pl-3">
                                     <a href="/canhan/nhapKQXLnambankyso" class="nav-link">
-                                        <p>4.5. Nhập bản ký số KQXL năm của cá nhân</p>
+                                        <p>3.6. Nhập bản ký số KQXL năm của cá nhân</p>
                                     </a>
                                 </li> --}}
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/thongbaonam" class="nav-link">
-                                        <p>4.6. Thông báo kết quả xếp loại năm của cá nhân</p>
+                                        <p>3.6. Thông báo kết quả xếp loại năm của cá nhân</p>
                                     </a>
                                 </li>
                             </ul>
@@ -252,19 +257,19 @@
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
                                 <p>
-                                    5. Quản lý Không tự đánh giá
+                                    4. Quản lý Không tự đánh giá
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item pl-3">
                                     <a href="/phieuKTDG/create" class="nav-link">
-                                        <p>5.1. Tạo phiếu KTĐG</p>
+                                        <p>4.1. Tạo phiếu KTĐG</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/phieuKTDG/list" class="nav-link">
-                                        <p>5.2. Tra cứu</p>
+                                        <p>4.2. Tra cứu</p>
                                     </a>
                                 </li>
                             </ul>
@@ -272,39 +277,39 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
-                                <p>7. Báo cáo hỗ trợ</p>
+                                <p>5. Báo cáo hỗ trợ</p>
                                 <i class="right fas fa-angle-left"></i>
 
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/tonghop" class="nav-link">
-                                        <p>7.1. Báo cáo tiến độ tháng</p>
+                                        <p>5.1. Báo cáo tiến độ</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_chualapphieu" class="nav-link">
-                                        <p>7.2. Danh sách chưa lập phiếu đánh giá</p>
+                                        <p>5.2. Danh sách chưa lập phiếu đánh giá</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_dalap_chuagui" class="nav-link">
-                                        <p>7.3. Danh sách đã lập nhưng chưa gửi phiếu đánh giá</p>
+                                        <p>5.3. Danh sách đã lập nhưng chưa gửi phiếu đánh giá</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_captren_danhgia" class="nav-link">
-                                        <p>7.4. Danh sách chờ cấp trên đánh giá</p>
+                                        <p>5.4. Danh sách chờ cấp trên đánh giá</p>
                                     </a>
                                 </li>
                                 <!-- <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_chicuctruong_pheduyet" class="nav-link">
-                                        <p>7.5. Danh sách chờ Trưởng Thuế cơ sở duyệt/phê duyệt</p>
+                                        <p>5.5. Danh sách chờ Trưởng Thuế cơ sở duyệt/phê duyệt</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/baocao/chitiet/ds_cuctruong_pheduyet" class="nav-link">
-                                        <p>7.6. Danh sách chờ Trưởng Thuế  tỉnh phê duyệt</p>
+                                        <p>5.6. Danh sách chờ Trưởng Thuế  tỉnh phê duyệt</p>
                                     </a>
                                 </li> -->
                             </ul>
@@ -312,19 +317,19 @@
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="fas fa-chart-bar"></i>
-                                <p>8. Thông tin về Ứng dụng</p>
+                                <p>6. Thông tin về Ứng dụng</p>
                                 <i class="right fas fa-angle-left"></i>
 
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item pl-3">
                                     <a href="/ungdung/nangcap" class="nav-link">
-                                        <p>8.1. Nội dung nâng cấp</p>
+                                        <p>6.1. Nội dung nâng cấp</p>
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
                                     <a href="/ungdung/huongdansudung" class="nav-link">
-                                        <p>8.2. Hướng dẫn sử dụng</p>
+                                        <p>6.2. Hướng dẫn sử dụng</p>
                                     </a>
                                 </li>
                             </ul>

@@ -3,7 +3,7 @@
 @section('title', 'Danh sách Phiếu đánh giá')
 
 @section('heading')
-    Cấp có thẩm quyền phê duyệt
+    Tổng hợp kết quả đánh giá
 @stop
 
 @section('content')
@@ -54,7 +54,8 @@
                                             <td class="text-center">{{ $danh_sach->don_vi->ten_don_vi }}</td>
                                             <td class="text-center">{{ $danh_sach->tong_diem_tu_cham }}</td>
                                             <td class="text-center">{{ $danh_sach->tong_diem_danh_gia }}</td>
-                                            <td class="text-center">{{ $danh_sach->ket_qua_xep_loai }} <br> {{ $danh_sach->ly_do->ly_do }}</td>
+                                            <td class="text-center">{{ $danh_sach->ket_qua_xep_loai }} <br>
+                                                {{ $danh_sach->ly_do->ly_do }}</td>
                                         </tr>
                                     @endforeach
                                 @endif
@@ -90,7 +91,7 @@
                 scrollY: 1000,
                 dom: 'Bfrtip',
                 buttons: [{
-                        text: 'Phê duyệt',
+                        text: 'Tổng hợp',
                         className: 'bg-olive',
                         action: function(e, dt, node, config) {
                             window.location = '{{ route('phieudanhgia.capqd.pheduyetthang') }}';

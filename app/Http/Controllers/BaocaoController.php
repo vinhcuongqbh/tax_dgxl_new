@@ -23,12 +23,8 @@ class BaocaoController extends Controller
     // Báo cáo tổng hợp
     public function tonghop(Request $request)
     {
-        // Trường hợp không chọn năm đánh giá
-        if (!isset($request->nam_danh_gia)) {
-            $thoi_diem_danh_gia = Carbon::now()->subMonth()->endOfMonth();
-        } else {
-            $thoi_diem_danh_gia = Carbon::createFromDate($request->nam_danh_gia, $request->thang_danh_gia)->endOfMonth();
-        }
+
+        $thoi_diem_danh_gia = $this->thoiDiemDanhGia($request->quy_danh_gia, $request->nam_danh_gia);
 
         // Trường hợp không chọn đơn vị
         if (!isset($request->ma_don_vi_da_chon)) {
@@ -184,7 +180,7 @@ class BaocaoController extends Controller
     public function ds_chualapphieu(Request $request)
     {
         // Xác định thời điểm đánh giá
-        $thoi_diem_danh_gia = $this->thoi_diem_danh_gia($request);
+        $thoi_diem_danh_gia = $this->thoiDiemDanhGia($request->quy_danh_gia, $request->nam_danh_gia);
         // Xác định đơn vị được chọn
         $ma_don_vi = $this->don_vi_da_chon($request);
         // Lấy danh mục Đơn vị
@@ -228,7 +224,7 @@ class BaocaoController extends Controller
     public function chitiet($chuc_nang, Request $request)
     {
         // Xác định thời điểm đánh giá
-        $thoi_diem_danh_gia = $this->thoi_diem_danh_gia($request);
+        $thoi_diem_danh_gia = $this->thoiDiemDanhGia($request->quy_danh_gia, $request->nam_danh_gia);
         // Xác định đơn vị được chọn
         $ma_don_vi = $this->don_vi_da_chon($request);
         // Lấy danh mục Đơn vị
@@ -282,55 +278,6 @@ class BaocaoController extends Controller
                     ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
                     ->get();
                 break;
-            case 'ds_chicuctruong_pheduyet':
-                // Danh sách cá nhân chờ Chi cục trưởng duyệt/phê duyệt
-                $danh_sach = PhieuDanhGia::where('ma_don_vi', 'LIKE', $ma_don_vi)
-                    ->where('ma_don_vi', '<>', '4401')
-                    ->where('thoi_diem_danh_gia', $thoi_diem_danh_gia->toDateString())
-                    ->where(function ($query) {
-                        $query->where('ma_trang_thai', '17')
-                            ->where('ma_chuc_vu', null)
-                            ->orwhere('ma_trang_thai', '16')
-                            ->where('ma_chuc_vu', '<>', null);
-                    })
-                    ->orderBy('ma_don_vi', 'ASC')
-                    ->orderBy('ma_phong', 'ASC')
-                    ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                    ->get();
-                break;
-            case 'ds_cuctruong_pheduyet':
-                // Danh sách cá nhân chờ Cục trưởng phê duyệt      
-                if (!isset($request->ma_don_vi_da_chon) or ($request->ma_don_vi_da_chon == '4400'))
-                    $danh_sach = PhieuDanhGia::where('thoi_diem_danh_gia', $thoi_diem_danh_gia->toDateString())
-                        ->where('ma_trang_thai', '17')
-                        ->where(function ($query) {
-                            $query->where('ma_don_vi',  '4401')
-                                ->orwhere('ma_don_vi', '<>', '4401')
-                                ->wherein('ma_chuc_vu', ['03', '06', '09', '10', '10A']);
-                        })
-                        ->orderBy('ma_don_vi', 'ASC')
-                        ->orderBy('ma_phong', 'ASC')
-                        ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                        ->get();
-                elseif ($request->ma_don_vi_da_chon == '4401')
-                    $danh_sach = PhieuDanhGia::where('thoi_diem_danh_gia', $thoi_diem_danh_gia->toDateString())
-                        ->where('ma_trang_thai', '17')
-                        ->where('ma_don_vi', '4401')
-                        ->orderBy('ma_don_vi', 'ASC')
-                        ->orderBy('ma_phong', 'ASC')
-                        ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                        ->get();
-                else {
-                    $danh_sach = PhieuDanhGia::where('thoi_diem_danh_gia', $thoi_diem_danh_gia->toDateString())
-                        ->where('ma_trang_thai', '17')
-                        ->where('ma_don_vi', 'LIKE', $ma_don_vi)
-                        ->wherein('ma_chuc_vu', ['03', '06', '09', '10', '10A'])
-                        ->orderBy('ma_don_vi', 'ASC')
-                        ->orderBy('ma_phong', 'ASC')
-                        ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                        ->get();
-                }
-                break;
         }
 
         return view('baocao.chi_tiet', [
@@ -341,5 +288,26 @@ class BaocaoController extends Controller
             'phong' => $phong,
             'phieu_danh_gia' => $danh_sach,
         ]);
+    }
+
+
+    // Hàm lấy thời điểm đánh giá theo quý
+    function thoiDiemDanhGia($quy = null, $nam = null)
+    {
+        $now = Carbon::now();
+
+        $nam = $nam ?? $now->year;
+
+        // Có chọn quý
+        if (!empty($quy)) {
+
+            return Carbon::create($nam, $quy * 3, 1)
+                ->endOfMonth();
+        }
+
+        // Không chọn quý
+        return $now->copy()
+            ->subQuarter()
+            ->endOfQuarter();
     }
 }

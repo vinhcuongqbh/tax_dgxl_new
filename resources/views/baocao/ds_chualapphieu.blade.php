@@ -17,9 +17,9 @@
                             {{ $ds_don_vi->ten_don_vi }}</option>
                     @endforeach
                 </select>
-                <label for="thang_danh_gia" class="h6 mt-2 mx-2">Tháng: </label>
-                <input id="thang_danh_gia" name="thang_danh_gia" type="number" min="1" max="12"
-                    value="{{ $thoi_diem_danh_gia->month }}" class="form-control text-center"><label
+                <label for="quy_danh_gia" class="h6 mt-2 mx-2">Tháng: </label>
+                <input id="quy_danh_gia" name="quy_danh_gia" type="number" min="1" max="4"
+                    value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" class="form-control text-center"><label
                     class="h6 mt-2 mx-2">/</label><input type="number" name="nam_danh_gia"
                     value="{{ $thoi_diem_danh_gia->year }}" class="form-control  text-center">
                 <button type="submit" class="btn bg-olive form-control ml-2">Xem</button>
@@ -39,13 +39,13 @@
                                 <col style="width:5%;">
                                 <col style="width:35%;">
                                 <col style="width:35%;">
-                                <col style="width:25%;">                                
+                                <col style="width:25%;">
                             </colgroup>
                             <thead>
                                 <tr>
                                     <th class="text-center align-middle">STT</th>
                                     <th class="text-center align-middle">Họ và tên</th>
-                                    <th class="text-center align-middle">Chức vụ</th>                                    
+                                    <th class="text-center align-middle">Chức vụ</th>
                                     <th class="text-center align-middle">Ghi chú</th>
                                     <th class="text-center align-middle" style="display: none;">Phòng</th>
                                     <th class="text-center align-middle" style="display: none;">Đơn vị</th>
@@ -59,7 +59,7 @@
                                             <td class="text-center text-bold bg-olive">{{ $i++ }}</td>
                                             <td class="text-bold bg-olive" colspan="5">{{ $dv->ten_don_vi }}</td>
                                             <td style="display: none;"></td>
-                                            <td style="display: none;"></td>                                            
+                                            <td style="display: none;"></td>
                                             <td style="display: none;"></td>
                                             <td style="display: none;"></td>
                                         </tr>
@@ -69,7 +69,7 @@
                                             <tr>
                                                 <td class="text-center"></td>
                                                 <td class="text-bold" colspan="5">{{ $ph->ten_phong }}</td>
-                                                <td style="display: none;"></td>                                                
+                                                <td style="display: none;"></td>
                                                 <td style="display: none;"></td>
                                                 <td style="display: none;">{{ $dv->ten_phong }}</td>
                                                 <td style="display: none;">{{ $dv->ten_don_vi }}</td>
@@ -80,7 +80,7 @@
                                             <tr>
                                                 <td class="text-center">{{ $j++ }}</td>
                                                 <td>{{ $phieu->name }}</td>
-                                                <td class="text-center">{{ $phieu->ten_chuc_vu }}</td>                                                
+                                                <td class="text-center">{{ $phieu->ten_chuc_vu }}</td>
                                                 <td class="text-center">{{ $phieu->ly_do }}</td>
                                                 <td style="display: none;">{{ $phieu->ten_phong }}</td>
                                                 <td style="display: none;">{{ $phieu->ten_don_vi }}</td>

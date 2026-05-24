@@ -36,6 +36,11 @@ class PhieuDanhGia extends Model
         return $this->BelongsTo(Phong::class, 'ma_phong')->withDefault();
     }
 
+    public function xep_loai(): BelongsTo
+    {
+        return $this->BelongsTo(XepLoai::class, 'ma_xep_loai')->withDefault();
+    }
+
     public function don_vi(): BelongsTo
     {
         return $this->BelongsTo(DonVi::class, 'ma_don_vi')->withDefault();

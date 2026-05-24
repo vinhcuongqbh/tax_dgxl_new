@@ -7,7 +7,7 @@
         @csrf
         <div class="d-flex">
             <div class="col-4">
-                Báo cáo tiến độ tháng
+                Báo cáo tiến độ
             </div>
             <div class="d-flex justify-content-end col-8">
                 <label for="ma_don_vi" class="h6 mt-2 mx-2">ĐV: </label>
@@ -17,9 +17,9 @@
                             {{ $ds_don_vi->ten_don_vi }}</option>
                     @endforeach
                 </select>
-                <label for="thang_danh_gia" class="h6 mt-2 mx-2">Tháng: </label>
-                <input id="thang_danh_gia" name="thang_danh_gia" type="number" min="1" max="12"
-                    value="{{ $thoi_diem_danh_gia->month }}" class="form-control text-center"><label
+                <label for="quy_danh_gia" class="h6 mt-2 mx-2">Quý: </label>
+                <input id="quy_danh_gia" name="quy_danh_gia" type="number" min="1" max="4"
+                    value="{{ ceil($thoi_diem_danh_gia->month / 3) }}" class="form-control text-center"><label
                     class="h6 mt-2 mx-2">/</label><input type="number" name="nam_danh_gia"
                     value="{{ $thoi_diem_danh_gia->year }}" class="form-control  text-center">
                 <button type="submit" class="btn bg-olive form-control ml-2">Xem</button>
@@ -37,20 +37,14 @@
                         <table id="table" class="table table-bordered table-striped">
                             <colgroup>
                                 <col style="width:5%;">
-                                <col style="width:30%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
-                                <col style="width:5%;">
+                                <col style="width:39%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
+                                <col style="width:8%;">
                             </colgroup>
                             <thead>
                                 <tr>
@@ -59,10 +53,6 @@
                                     <th class="text-center align-middle" colspan="3">Công chức</th>
                                     <th class="text-center align-middle" colspan="2">Cá nhân <br>đánh giá</th>
                                     <th class="text-center align-middle" colspan="2">Cấp trên <br>đánh giá</th>
-                                    <th class="text-center align-middle" colspan="2">Chi cục trưởng duyệt/<br>phê duyệt
-                                    </th>
-                                    <th class="text-center align-middle" colspan="2">Cục trưởng<br>phê duyệt</th>
-                                    <th class="text-center align-middle" colspan="2">Hội đồng TĐKT<br>phê duyệt</th>
                                 </tr>
                                 <tr>
                                     <th class="text-center align-middle">Tổng số</th>
@@ -72,12 +62,6 @@
                                     <th class="text-center align-middle">Chưa gửi phiếu</th>
                                     <th class="text-center align-middle">Chưa đánh giá</th>
                                     <th class="text-center align-middle">Đã đánh giá</th>
-                                    <th class="text-center align-middle">Chưa Duyệt<br>/phê duyệt</th>
-                                    <th class="text-center align-middle">Đã phê duyệt</th>
-                                    <th class="text-center align-middle">Chưa phê duyệt</th>
-                                    <th class="text-center align-middle">Đã phê duyệt</th>
-                                    <th class="text-center align-middle">Chưa phê duyệt</th>
-                                    <th class="text-center align-middle">Đã phê duyệt</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,12 +76,6 @@
                                         <td class="text-center">{{ $ds['ca_nhan_chua_gui_phieu_danh_gia'] }} </td>
                                         <td class="text-center">{{ $ds['ca_nhan_cho_cap_tren_danh_gia'] }} </td>
                                         <td class="text-center">{{ $ds['cap_tren_da_danh_gia'] }} </td>
-                                        <td class="text-center">{{ $ds['ca_nhan_cho_chi_cuc_truong_phe_duyet'] }} </td>
-                                        <td class="text-center">{{ $ds['chi_cuc_truong_da_phe_duyet'] }} </td>
-                                        <td class="text-center">{{ $ds['ca_nhan_cho_cuc_truong_phe_duyet'] }} </td>
-                                        <td class="text-center">{{ $ds['cuc_truong_da_phe_duyet'] }} </td>
-                                        <td class="text-center">{{ $ds['ca_nhan_cho_hoi_dong_phe_duyet'] }} </td>
-                                        <td class="text-center">{{ $ds['hoi_dong_da_phe_duyet'] }} </td>
                                     </tr>
                                 @endforeach
                             </tbody>
