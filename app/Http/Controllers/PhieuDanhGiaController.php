@@ -319,36 +319,36 @@ class PhieuDanhGiaController extends Controller
         return view('danhgia.canhan_list', ['danh_sach' => $danh_sach_tu_danh_gia]);
     }
 
-    //////////////// Cấp tham mưu đánh giá, xếp loại //////////////////////
+    //////////////// Cấp trên đánh giá, xếp loại //////////////////////
 
     //Danh sách Phiếu đánh giá cấp trên cần thực hiện đánh giá
     public function captrenList()
     {
-        if (in_array(Auth::user()->ma_chuc_vu, ['01', '02A'])) {
-            // Nếu Người dùng có chức vụ Trưởng TT, Phó Trưởng TT phụ trách
-            // Đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 06A-Phó Trưởng TCS phụ trách; 
-            // 07A-Phó Chánh Văn phòng phụ trách; 08A-Phó Trưởng phòng phụ trách
+        if (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.1'))) {
+            // Nếu Người dùng có chức vụ Trưởng TT
+            // Đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 
             $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
-                ->wherein('ma_chuc_vu', ['02', '03', '04', '05', '06A', '07A', '08A'])
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.1'))
                 ->orderBy('thoi_diem_danh_gia', 'DESC')
                 ->orderBy('ma_don_vi', 'ASC')
                 ->orderBy('ma_phong', 'ASC')
                 ->get();
-        } elseif (in_array(Auth::user()->ma_chuc_vu, ['03', '06A'])) {
-            // Nếu Người dùng có chức vụ Trưởng TCS, Phó Trưởng TCS phụ trách
-            // Đánh giá cho: 06-Phó Trưởng TCS; 09-Đội trưởng; 10A-Phó Đội trưởng phụ trách
-            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
-                ->where('ma_don_vi', Auth::user()->ma_don_vi)
-                ->wherein('ma_chuc_vu', ['06', '09', '10A'])
-                ->orderBy('thoi_diem_danh_gia', 'DESC')
-                ->get();
-        } elseif (in_array(Auth::user()->ma_chuc_vu, ['04', '05', '09', '07A', '08A', '10A'])) {
-            // Nếu Người dùng có chức vụ Chánh Văn phòng, Trưởng phòng, Đội trưởng , Phó Chánh Văn phòng phụ trách, 
-            // Phó Trưởng phòng phụ trách, Phó Đội trưởng phụ trách
+        } elseif (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.2'))) {
+            // Nếu Người dùng có chức vụ Chánh Văn phòng, Trưởng phòng
+            // Đánh giá cho: 07-Phó Chánh Văn phòng; 08-Phó Trưởng phòng; 11-Công chức; 12-HĐLĐ
             $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
                 ->where('ma_don_vi', Auth::user()->ma_don_vi)
                 ->where('ma_phong', Auth::user()->ma_phong)
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.2'))
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->get();
+        } elseif (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.3'))) {
+            // Nếu Người dùng có chức vụ Trưởng Thuế cơ sở
+            // Đánh giá cho: 09-Tổ trưởng; 10-Phó Tổ trưởng; 11-Công chức; 12-HĐLĐ
+            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
+                ->where('ma_don_vi', Auth::user()->ma_don_vi)
                 ->where('so_hieu_cong_chuc', '<>', Auth::user()->so_hieu_cong_chuc)
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.3'))
                 ->orderBy('thoi_diem_danh_gia', 'DESC')
                 ->get();
         } else {
@@ -460,47 +460,46 @@ class PhieuDanhGiaController extends Controller
 
     public function captrenSend()
     {
-        if ((Carbon::now()->day > 31) and (Auth::user()->ma_chuc_vu != "01")) {
-            return back()->with('msg_error', 'Đã quá thời hạn cấp trên đánh giá cho cấp dưới. Vui lòng liên hệ phòng Tổ chức cán bộ để được hỗ trợ.');
+
+        if (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.1'))) {
+            // Nếu Người dùng có chức vụ Trưởng TT
+            // Đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 
+            $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
+                ->wherein('phieu_danh_gia.ma_chuc_vu', config('danhgia.nhom_nv.1'))
+                ->get();
+        } elseif (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.2'))) {
+            // Nếu Người dùng có chức vụ Chánh Văn phòng, Trưởng phòng
+            // Đánh giá cho: 07-Phó Chánh Văn phòng; 08-Phó Trưởng phòng; 11-Công chức; 12-HĐLĐ
+            $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
+                ->where('phieu_danh_gia.ma_don_vi', Auth::user()->ma_don_vi)
+                ->wherein('phieu_danh_gia.ma_chuc_vu', config('danhgia.nhom_nv.2'))
+                ->get();
+        } elseif (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.3'))) {
+            // Nếu Người dùng có chức vụ Trưởng Thuế cơ sở
+            // Đánh giá cho: 09-Tổ trưởng; 10-Phó Tổ trưởng; 11-Công chức; 12-HĐLĐ
+            $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
+                ->where('phieu_danh_gia.ma_don_vi', Auth::user()->ma_don_vi)
+                ->where('phieu_danh_gia.ma_phong', Auth::user()->ma_phong)
+                ->where('phieu_danh_gia.so_hieu_cong_chuc', '<>', Auth::user()->so_hieu_cong_chuc)
+                ->wherein('phieu_danh_gia.ma_chuc_vu', config('danhgia.nhom_nv.3'))
+                ->get();
         } else {
-            if (in_array(Auth::user()->ma_chuc_vu, ['01', '02A'])) {
-                // Nếu Người dùng có chức vụ Trưởng TT, Phó Trưởng TT phụ trách
-                // Gửi Đánh giá của: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 06A-Phó Trưởng TCS phụ trách; 
-                // 07A-Phó Chánh Văn phòng phụ trách; 08A-Phó Trưởng phòng phụ trách
-                $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
-                    ->wherein('phieu_danh_gia.ma_chuc_vu', ['02', '03', '04', '05', '06A', '07A', '08A'])
-                    ->get();
-            } elseif (in_array(Auth::user()->ma_chuc_vu, ['03', '06A'])) {
-                // Nếu Người dùng có chức vụ Trưởng TCS
-                // Đánh giá cho: 06-Phó Trưởng TCS; 09-Đội trưởng; 10A-Phó Đội trưởng phụ trách
-                $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
-                    ->where('phieu_danh_gia.ma_don_vi', Auth::user()->ma_don_vi)
-                    ->wherein('phieu_danh_gia.ma_chuc_vu', ['06', '09', '10A'])
-                    ->get();
-            } elseif (in_array(Auth::user()->ma_chuc_vu, ['04', '05', '09', '07A', '08A', '10A'])) {
-                // Nếu Người dùng có chức vụ Chánh Văn phòng, Trưởng phòng, Đội trưởng , Phó Chánh Văn phòng phụ trách, 
-                // Phó Trưởng phòng phụ trách, Phó Đội trưởng phụ trách
-                // Gửi Đánh giá của cấp phó và công chức không giữ chức vụ quản lý thuộc phòng
-                $danh_sach = PhieuDanhGia::where('phieu_danh_gia.ma_trang_thai', 15)
-                    ->where('phieu_danh_gia.ma_don_vi', Auth::user()->ma_don_vi)
-                    ->where('phieu_danh_gia.ma_phong', Auth::user()->ma_phong)
-                    ->where('phieu_danh_gia.so_hieu_cong_chuc', '<>', Auth::user()->so_hieu_cong_chuc)
-                    ->get();
-            } else {
-                $danh_sach = null;
-            }
-
-            if ($danh_sach->isEmpty() || $danh_sach == null)
-                return redirect()->route('phieudanhgia.captren.list')->with('msg_error', 'Danh sách trống / Có phiếu chưa được cấp trên đánh giá');
-
-            foreach ($danh_sach as $list) {
-                if (in_array($list->ma_chuc_vu, ['06', '09', '10', '06A', '10A'])) $list->ma_trang_thai = 16;
-                else $list->ma_trang_thai = 17;
-                $list->save();
-            }
-
-            return redirect()->route('phieudanhgia.captren.list')->with('msg_success', 'Đã gửi thành công Danh sách phiếu đánh giá');
+            $danh_sach = null;
         }
+
+        if ($danh_sach->isEmpty() || $danh_sach == null)
+            return redirect()->route('phieudanhgia.captren.list')->with('msg_error', 'Danh sách trống / Có phiếu chưa được cấp trên đánh giá');
+
+        foreach ($danh_sach as $list) {
+            // if (in_array($list->ma_chuc_vu, ['06', '09', '10', '06A', '10A'])) $list->ma_trang_thai = 16;
+            // else $list->ma_trang_thai = 17;
+            // $list->save();
+
+            $list->ma_trang_thai = 17;
+            $list->save();
+        }
+
+        return redirect()->route('phieudanhgia.captren.list')->with('msg_success', 'Đã gửi thành công Danh sách phiếu đánh giá');
     }
 
 
@@ -528,7 +527,7 @@ class PhieuDanhGiaController extends Controller
                 // ->where('thoi_diem_danh_gia', '<=', Carbon::now())
                 ->where('thoi_diem_danh_gia', '<=', Carbon::now())
                 ->where(function ($query) {
-                    $query->wherein('ma_chuc_vu', ['02', '03', '04', '05', '06', '07', '08', '09', '10', '06A', '07A', '08A', '10A'])
+                    $query->wherein('ma_chuc_vu', ['02', '03', '04', '05', '06', '07', '08', '09', '10', '06A', '07A', '08A', '10A', '11', '12'])
                         ->orwhere('ma_don_vi', Auth::user()->ma_don_vi);
                 })
                 ->orderBy('thoi_diem_danh_gia', 'DESC')
@@ -563,71 +562,68 @@ class PhieuDanhGiaController extends Controller
 
     public function capQDPheDuyetThang()
     {
-        if ((Carbon::now()->day > 31) and (in_array(Auth::user()->ma_chuc_vu, ['01', '02A']))) {
-            return back()->with('msg_error', 'Đã quá thời hạn Phê duyệt kết quả cho cấp dưới. Vui lòng liên hệ phòng Tổ chức cán bộ để được hỗ trợ.');
+
+        if (in_array(Auth::user()->ma_chuc_vu, ['01', '02A'])) {
+            // Nếu Người dùng có chức vụ Trưởng TT, Phó Trưởng TT phụ trách
+            // Phê duyệt đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 06-Phó Trưởng TCS; 
+            // 07-Phó Chánh Văn phòng; 08-Phó Trưởng phòng; 09-Đội trưởng; 10-Phó Đội Trưởng; 06A- Phó Trưởng TCS phụ trách; 
+            // 07A- Phó Chánh Văn phòng phụ trách; 08A-Phó Trưởng phòng phụ trách; 10A-Phó Đội trưởng phụ trách
+            // Công chức không giữ chức vụ lãnh đạo thuộc Văn phòng, Phòng của Cục thuế   
+            $danh_sach = PhieuDanhGia::where('ma_trang_thai', '17')
+                // ->where('thoi_diem_danh_gia', '<=', Carbon::now())
+                ->where('thoi_diem_danh_gia', '<=', Carbon::now())
+                ->where(function ($query) {
+                    $query->wherein('ma_chuc_vu', ['02', '03', '04', '05', '06', '07', '08', '09', '10', '06A', '07A', '08A', '10A'])
+                        ->orwhere('ma_don_vi', Auth::user()->ma_don_vi);
+                })
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
+        } elseif (in_array(Auth::user()->ma_chuc_vu, ['03', '06A'])) {
+            // Nếu Người dùng có chức vụ Trưởng TCS, Phó Trưởng TCS phụ trách
+            // Đánh giá cho Công chức không giữ chức vụ lãnh đạo thuộc Chi cục     
+            $danh_sach = PhieuDanhGia::where('ma_don_vi', Auth::user()->ma_don_vi)
+                // ->where('thoi_diem_danh_gia', '<=', Carbon::now())
+                ->where('thoi_diem_danh_gia', '<=', Carbon::now())
+                ->where('ma_trang_thai', '17')
+                ->where('ma_chuc_vu', null)
+                ->orwhere('ma_don_vi', Auth::user()->ma_don_vi)
+                ->where('thoi_diem_danh_gia', '<=', Carbon::now())
+                ->where('ma_trang_thai', '16')
+                ->where('ma_chuc_vu', '<>', null)
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
         } else {
-            if (in_array(Auth::user()->ma_chuc_vu, ['01', '02A'])) {
-                // Nếu Người dùng có chức vụ Trưởng TT, Phó Trưởng TT phụ trách
-                // Phê duyệt đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 06-Phó Trưởng TCS; 
-                // 07-Phó Chánh Văn phòng; 08-Phó Trưởng phòng; 09-Đội trưởng; 10-Phó Đội Trưởng; 06A- Phó Trưởng TCS phụ trách; 
-                // 07A- Phó Chánh Văn phòng phụ trách; 08A-Phó Trưởng phòng phụ trách; 10A-Phó Đội trưởng phụ trách
-                // Công chức không giữ chức vụ lãnh đạo thuộc Văn phòng, Phòng của Cục thuế   
-                $danh_sach = PhieuDanhGia::where('ma_trang_thai', '17')
-                    // ->where('thoi_diem_danh_gia', '<=', Carbon::now())
-                    ->where('thoi_diem_danh_gia', '<=', Carbon::now())
-                    ->where(function ($query) {
-                        $query->wherein('ma_chuc_vu', ['02', '03', '04', '05', '06', '07', '08', '09', '10', '06A', '07A', '08A', '10A'])
-                            ->orwhere('ma_don_vi', Auth::user()->ma_don_vi);
-                    })
-                    ->orderBy('thoi_diem_danh_gia', 'DESC')
-                    ->orderBy('ma_don_vi', 'ASC')
-                    ->orderBy('ma_phong', 'ASC')
-                    ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                    ->get();
-            } elseif (in_array(Auth::user()->ma_chuc_vu, ['03', '06A'])) {
-                // Nếu Người dùng có chức vụ Trưởng TCS, Phó Trưởng TCS phụ trách
-                // Đánh giá cho Công chức không giữ chức vụ lãnh đạo thuộc Chi cục     
-                $danh_sach = PhieuDanhGia::where('ma_don_vi', Auth::user()->ma_don_vi)
-                    // ->where('thoi_diem_danh_gia', '<=', Carbon::now())
-                    ->where('thoi_diem_danh_gia', '<=', Carbon::now())
-                    ->where('ma_trang_thai', '17')
-                    ->where('ma_chuc_vu', null)
-                    ->orwhere('ma_don_vi', Auth::user()->ma_don_vi)
-                    ->where('thoi_diem_danh_gia', '<=', Carbon::now())
-                    ->where('ma_trang_thai', '16')
-                    ->where('ma_chuc_vu', '<>', null)
-                    ->orderBy('thoi_diem_danh_gia', 'DESC')
-                    ->orderBy('ma_don_vi', 'ASC')
-                    ->orderBy('ma_phong', 'ASC')
-                    ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
-                    ->get();
-            } else {
-                $danh_sach = Null;
-            }
+            $danh_sach = Null;
+        }
 
-            // if ($danh_sach_phe_duyet != null) $this->kQXLThang($danh_sach_phe_duyet);
+        // if ($danh_sach_phe_duyet != null) $this->kQXLThang($danh_sach_phe_duyet);
 
-            if ($danh_sach != null) {
-                foreach ($danh_sach as $ds) {
-                    if ($ds->ma_chuc_vu == '01') {
-                        $ds->tong_diem_danh_gia = $ds->tong_diem_tu_cham;
-                        $ds->ket_qua_xep_loai = $ds->ca_nhan_tu_xep_loai;
-                    }
-                    $ds->ma_cap_tren_phe_duyet = Auth::user()->so_hieu_cong_chuc;
-                    if (in_array($ds->ma_chuc_vu, ['06', '09', '10'])) {
-                        if ($ds->ma_trang_thai == 16) $ds->ma_trang_thai = 17;
-                        elseif ($ds->ma_trang_thai == 17) $ds->ma_trang_thai = 19;
-                    } else $ds->ma_trang_thai = 19;
-                    $ds->save();
+        if ($danh_sach != null) {
+            foreach ($danh_sach as $ds) {
+                if ($ds->ma_chuc_vu == '01') {
+                    $ds->tong_diem_danh_gia = $ds->tong_diem_tu_cham;
+                    $ds->ket_qua_xep_loai = $ds->ca_nhan_tu_xep_loai;
                 }
-
-                // Lưu kết quả vào Bảng kết quả xếp loại tháng
-                $this->kQXLThang($danh_sach); //if (!in_array($danh_sach->ma_chuc_vu, ['06', '09', '10'])) {}
-
-                return redirect()->route('phieudanhgia.capqd.list')->with('msg_success', 'Đã phê duyệt thành công Danh sách phiếu đánh giá');
-            } else {
-                return redirect()->route('phieudanhgia.capqd.list')->with('msg_error', 'Danh sách phê duyệt trống');
+                $ds->ma_cap_tren_phe_duyet = Auth::user()->so_hieu_cong_chuc;
+                if (in_array($ds->ma_chuc_vu, ['06', '09', '10'])) {
+                    if ($ds->ma_trang_thai == 16) $ds->ma_trang_thai = 17;
+                    elseif ($ds->ma_trang_thai == 17) $ds->ma_trang_thai = 19;
+                } else $ds->ma_trang_thai = 19;
+                $ds->save();
             }
+
+            // Lưu kết quả vào Bảng kết quả xếp loại tháng
+            $this->kQXLThang($danh_sach); //if (!in_array($danh_sach->ma_chuc_vu, ['06', '09', '10'])) {}
+
+            return redirect()->route('phieudanhgia.capqd.list')->with('msg_success', 'Đã phê duyệt thành công Danh sách phiếu đánh giá');
+        } else {
+            return redirect()->route('phieudanhgia.capqd.list')->with('msg_error', 'Danh sách phê duyệt trống');
         }
     }
 

@@ -154,11 +154,11 @@
                                         <p>2.2. Cấp trên đánh giá</p>
                                     </a>
                                 </li>
-                                <!-- <li class="nav-item pl-3">
+                                <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/capqdList" class="nav-link">
-                                        <p>2.3. Cấp có thẩm quyền phê duyệt</p>
+                                        <p>2.3. Cấp tổng hợp</p>
                                     </a>
-                                </li> -->
+                                </li>
                                 <li class="nav-item pl-3">
                                     <a href="/phieudanhgia/thongbaothang" class="nav-link">
                                         <p>2.4. Thông báo KQ xếp loại</p>
