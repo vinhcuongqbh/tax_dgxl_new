@@ -82,7 +82,7 @@ Route::middleware('auth')->group(function () {
             Route::get('{id}/delete', [XeploaiController::class, 'destroy'])->name('xeploai.delete');
             Route::get('{id}/restore', [XeploaiController::class, 'restore'])->name('xeploai.restore');
         });
-        
+
         Route::resource('roles', RoleController::class);
         Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->name('roles.delete');
         Route::get('roles/{roleId}/give-permissions', [RoleController::class, 'addPermissionToRole']);
@@ -91,7 +91,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('permissions', PermissionController::class);
         Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy'])->name('permissions.delete');
     });
-    
+
     Route::group(['prefix' => 'phieudanhgia'], function () {
         Route::get('canhanList', [PhieuDanhGiaController::class, 'canhanList'])->name('phieudanhgia.canhan.list');
         Route::get('canhanCreate', [PhieuDanhGiaController::class, 'canhanCreate'])->name('phieudanhgia.canhan.create');
@@ -100,6 +100,10 @@ Route::middleware('auth')->group(function () {
         Route::post('{id}/canhanUpdate', [PhieuDanhGiaController::class, 'canhanUpdate'])->name('phieudanhgia.canhan.update');
         Route::get('{id}/canhanShow', [PhieuDanhGiaController::class, 'canhanShow'])->name('phieudanhgia.canhan.show');
         Route::get('{id}/canhanSend', [PhieuDanhGiaController::class, 'canhanSend'])->name('phieudanhgia.canhan.send');
+
+        Route::get('capTongHopKiemTra', [PhieuDanhGiaController::class, 'capTongHopKiemTra'])->name('phieudanhgia.captonghop.kiemtra');
+        Route::get('capTongHopDuyet', [PhieuDanhGiaController::class, 'capTongHopDuyet'])->name('phieudanhgia.captonghop.duyet');
+        Route::get('{id}/capTongHopSendBack', [PhieuDanhGiaController::class, 'capTongHopSendBack'])->name('phieudanhgia.captonghop.sendback');
 
         Route::get('captrenList', [PhieuDanhGiaController::class, 'captrenList'])->name('phieudanhgia.captren.list');
         Route::get('{id}/captrenCreate', [PhieuDanhGiaController::class, 'captrenCreate'])->name('phieudanhgia.captren.create');
@@ -136,7 +140,7 @@ Route::middleware('auth')->group(function () {
         Route::get('nhapketqua', [KQXLNamController::class, 'nhapKetQuaTapThe']);
         Route::post('nhapketqua', [KQXLNamController::class, 'nhapKetQuaTapThe'])->name('tapthe.nhapketqua');
         Route::post('luuketqua', [KQXLNamController::class, 'luuKetQuaTapThe'])->name('tapthe.luuketqua');
-        Route::get('tracuuketqua', [KQXLNamController::class, 'traCuuKetQuaTapThe'])->name('tapthe.tracuu');       
+        Route::get('tracuuketqua', [KQXLNamController::class, 'traCuuKetQuaTapThe'])->name('tapthe.tracuu');
     });
 
     Route::group(['prefix' => 'canhan'], function () {

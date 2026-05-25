@@ -38,6 +38,11 @@ class PhieuDanhGiaController extends Controller
         $this->middleware('permission:xem phiếu đánh giá', ['only' => ['canhanShow']]);
         $this->middleware('permission:gửi phiếu đánh giá', ['only' => ['canhanSend']]);
 
+        // Cấp tổng hợp kiểm tra phiếu
+        $this->middleware('permission:xem danh sách kiểm tra quý', ['only' => ['capTongHopKiemTra']]);
+        $this->middleware('permission:duyệt danh sách kiểm tra quý', ['only' => ['capTongHopDuyet']]);
+        $this->middleware('permission:cấp tổng hợp trả phiếu đánh giá trước phê duyệt', ['only' => ['capTongHopSendBack']]);
+
         // Cấp trên đánh giá
         $this->middleware('permission:xem danh sách phiếu cấp dưới', ['only' => ['captrenList']]);
         $this->middleware('permission:đánh giá cho cấp dưới', ['only' => ['captrenCreate', 'captrenStore']]);
@@ -45,12 +50,10 @@ class PhieuDanhGiaController extends Controller
         $this->middleware('permission:gửi phiếu đã đánh giá', ['only' => ['captrenSend']]);
         $this->middleware('permission:cấp đánh giá trả phiếu đánh giá', ['only' => ['captrenSendBack']]);
 
-        // Cấp tổng hợp
-        $this->middleware('permission:xem danh sách phê duyệt tháng', ['only' => ['capqdList']]);
-        $this->middleware('permission:phê duyệt kết quả xếp loại tháng', ['only' => ['capQDPheDuyetThang']]);
-        $this->middleware('permission:cấp phê duyệt trả phiếu đánh giá', ['only' => ['capqdSendBack']]);
-        $this->middleware('permission:xem danh sách phê duyệt quý', ['only' => ['capQDDSQuy']]);
-        $this->middleware('permission:phê duyệt kết quả xếp loại quý', ['only' => ['capQDPheDuyetDSQuy']]);
+        // Cấp tổng hợp tổng hợp kết quả
+        $this->middleware('permission:xem danh sách tổng hợp quý', ['only' => ['capqdList']]);
+        $this->middleware('permission:tổng hợp kết quả đánh giá quý', ['only' => ['capQDPheDuyetThang']]);
+        $this->middleware('permission:cấp tổng hợp trả phiếu đánh giá sau phê duyệt', ['only' => ['capqdSendBack']]);
 
         // Báo cáo
         $this->middleware('permission:xem thông báo kết quả tháng', ['only' => ['thongBaoThang']]);
@@ -294,7 +297,7 @@ class PhieuDanhGiaController extends Controller
         if (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.1'))) {
             // Nếu Người dùng có chức vụ 01-Trưởng TT
             // Đánh giá cho: 02-Phó Trưởng TT; 03-Trưởng TCS; 04-Chánh Văn phòng; 05-Trưởng phòng; 
-            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
+            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [14, 15])
                 ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.1'))
                 ->orderBy('thoi_diem_danh_gia', 'DESC')
                 ->orderBy('ma_don_vi', 'ASC')
@@ -312,7 +315,7 @@ class PhieuDanhGiaController extends Controller
         } elseif (in_array(Auth::user()->ma_chuc_vu, config('danhgia.nhom_ld.3'))) {
             // Nếu Người dùng có chức vụ 03-Trưởng Thuế cơ sở
             // Đánh giá cho: 09-Tổ trưởng; 10-Phó Tổ trưởng; 11-Công chức; 12-HĐLĐ
-            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [13, 15])
+            $danh_sach_cap_tren_danh_gia = PhieuDanhGia::wherein('ma_trang_thai', [14, 15])
                 ->where('ma_don_vi', Auth::user()->ma_don_vi)
                 ->where('so_hieu_cong_chuc', '<>', Auth::user()->so_hieu_cong_chuc)
                 ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.3'))
@@ -453,6 +456,7 @@ class PhieuDanhGiaController extends Controller
             $danh_sach = null;
         }
 
+
         if ($danh_sach->isEmpty() || $danh_sach == null)
             return redirect()->route('phieudanhgia.captren.list')->with('msg_error', 'Danh sách trống / Có phiếu chưa được cấp trên đánh giá');
 
@@ -480,6 +484,79 @@ class PhieuDanhGiaController extends Controller
 
 
     //////////////////////// Cấp tổng hợp ////////////////////////////////
+    // Danh sách Phiếu đánh giá cần tổng hợp
+    public function capTongHopKiemTra()
+    {
+        $danh_sach = Null;
+        if (Auth::user()->ma_don_vi == '4401') {
+            $danh_sach = PhieuDanhGia::where('ma_trang_thai', '13')
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.1'))
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
+        } else {
+            $danh_sach = PhieuDanhGia::where('ma_trang_thai', '13')
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.3'))
+                ->where('ma_don_vi', Auth::user()->ma_don_vi)
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
+        }
+
+        return view('danhgia.capth_kiemtra', ['danh_sach' => $danh_sach]);
+    }
+
+
+    public function capTongHopDuyet()
+    {
+        $danh_sach = Null;
+        if (Auth::user()->ma_don_vi == '4401') {
+            $danh_sach = PhieuDanhGia::where('ma_trang_thai', '13')
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.1'))
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
+        } else {
+            $danh_sach = PhieuDanhGia::where('ma_trang_thai', '13')
+                ->wherein('ma_chuc_vu', config('danhgia.nhom_nv.3'))
+                ->where('ma_don_vi', Auth::user()->ma_don_vi)
+                ->orderBy('thoi_diem_danh_gia', 'DESC')
+                ->orderBy('ma_don_vi', 'ASC')
+                ->orderBy('ma_phong', 'ASC')
+                ->orderByRaw('ISNULL(ma_chuc_vu), ma_chuc_vu ASC')
+                ->get();
+        }
+
+        if ($danh_sach != null) {
+            foreach ($danh_sach as $ds) {
+                $ds->ma_trang_thai = 14;
+                $ds->save();
+            }
+            return redirect()->route('phieudanhgia.captonghop.kiemtra')->with('msg_success', 'Đã kiểm tra Danh sách phiếu đánh giá');
+        } else {
+            return redirect()->route('phieudanhgia.captonghop.kiemtra')->with('msg_error', 'Danh sách tổng hợp trống');
+        }
+    }
+
+
+    public function capTongHopSendBack($ma_phieu_danh_gia)
+    {
+        $phieu_danh_gia = PhieuDanhGia::where('ma_phieu_danh_gia', $ma_phieu_danh_gia)->first();
+
+        $phieu_danh_gia->ma_trang_thai = 11;
+        $phieu_danh_gia->save();
+
+        return redirect()->route('phieudanhgia.captonghop.kiemtra')->with('msg_success', 'Đã gửi trả Phiếu đánh giá');
+    }
+
+
+
     // Danh sách Phiếu đánh giá cần tổng hợp
     public function capqdList()
     {

@@ -150,7 +150,7 @@
                                     </a>
                                 </li>
                                 <li class="nav-item pl-3">
-                                    <a href="#" class="nav-link">
+                                    <a href="/phieudanhgia/capTongHopKiemTra" class="nav-link">
                                         <p>2.2. Kiểm tra Phiếu đánh giá</p>
                                     </a>
                                 </li>

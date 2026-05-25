@@ -13,6 +13,7 @@ class PhieuDanhGia extends Model
     protected $table = 'phieu_danh_gia';
 
     protected $casts = [
+        'thoi_diem_danh_gia' => 'date',
         'diem_tieu_chi_chung' => 'decimal:1',
         'diem_thuc_hien_nhiem_vu' => 'decimal:1',
         'tong_diem_tu_cham' => 'decimal:1',

@@ -175,15 +175,15 @@
 
                             <h6>4. Ưu điểm:</h6>
                             <textarea id="uu_diem" name="uu_diem" rows="5" style="width: 100%;">{{ $phieu_danh_gia->uu_diem }}</textarea>
-                            <br>
+                            <br><br>
 
                             <h6>5. Hạn chế, khuyết điểm:</h6>
                             <textarea id="khuyet_diem" name="khuyet_diem" rows="5" style="width: 100%;">{{ $phieu_danh_gia->khuyet_diem }}</textarea>
-                            <br>
+                            <br><br>
 
                             <h6>6. Ý kiến nhận xét của cấp có thẩm quyền theo dõi, đánh giá:</h6>
                             <textarea id="cap_tren_nhan_xet" name="cap_tren_nhan_xet" rows="5" style="width: 100%;" disabled>{{ $phieu_danh_gia->cap_tren_nhan_xet }}</textarea>
-                            <br>
+                            <br><br>
 
                             {{-- Mục Cá nhân tự xếp loại --}}
                             <h6 class="text-bold">C. Cá nhân tự xếp loại: <i>(Chọn 01 trong 04 ô
@@ -399,6 +399,27 @@
                         min: 1,
                         max: {{ $thoi_diem_danh_gia->month }},
                     },
+                    uu_diem: {
+                        required: true,
+                    },
+                    khuyet_diem: {
+                        required: true,
+                    },
+                    diem_tieu_chi_chung: {
+                        required: true,
+                        min: 0,
+                        max: 30,
+                    },
+                    diem_thuc_hien_nhiem_vu: {
+                        required: true,
+                        min: 0,
+                        max: 70,
+                    },
+                    tong_diem_tu_cham: {
+                        required: true,
+                        min: 0,
+                        max: 100,
+                    },
                     @php
                         foreach ($ket_qua_muc_A as $data) {
                             echo '
@@ -420,6 +441,12 @@
                         required: "Vui lòng nhập thông tin",
                         min: "Không nhập số âm",
                         max: "Chưa đến thời điểm đánh giá",
+                    },
+                    uu_diem: {
+                        required: "Vui lòng nhập thông tin",
+                    },
+                    khuyet_diem: {
+                        required: "Vui lòng nhập thông tin",
                     },
                     diem_tieu_chi_chung: {
                         required: "Vui lòng nhập thông tin",
